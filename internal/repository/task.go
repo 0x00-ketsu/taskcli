@@ -10,6 +10,8 @@ type Task interface {
 	GetTodayTodoCount() int
 	IsTaskExist(title string) bool
 
+	Search(title string, isCompleted, isDeleted bool) ([]model.Task, error)
+
 	GetByID(ID string) (model.Task, error)
 	GetByTitle(title string) (model.Task, error)
 

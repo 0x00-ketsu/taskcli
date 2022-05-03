@@ -13,7 +13,9 @@ import (
 
 var (
 	TODO_HEADER      = "[::b]> Todo items"
-	COMPLETE_DHEADER = "[green::b]> Completed"
+	COMPLETED_HEADER = "[green::b]> Completed"
+	EXPIRED_HEADER   = "[yellow::b]> Expired"
+	DELETED_HEADER   = "[red::b]> Deleted"
 )
 
 type TaskPanel struct {
@@ -170,6 +172,8 @@ func (p *TaskPanel) renderTaskList(tasks []model.Task) {
 		p.unclassifyTasks(tasks)
 	case "trash":
 		p.unclassifyTasks(tasks)
+	case "search":
+		p.classifyTasks(tasks)
 	}
 
 	// Remove hint
@@ -180,18 +184,24 @@ func (p *TaskPanel) renderTaskList(tasks []model.Task) {
 
 // Classify tasks to: todo, completed
 func (p *TaskPanel) classifyTasks(tasks []model.Task) {
-	var todoTasks, completedTasks []model.Task
+	var todoTasks, completedTasks, expiredTasks, deletedTasks []model.Task
 
 	for _, task := range tasks {
-		if task.IsCompleted {
+		if task.IsDeleted {
+			deletedTasks = append(deletedTasks, task)
+		} else if task.IsCompleted {
 			completedTasks = append(completedTasks, task)
 		} else {
-			todoTasks = append(todoTasks, task)
+			if task.DueDate.Before(today) {
+				expiredTasks = append(expiredTasks, task)
+			} else {
+				todoTasks = append(todoTasks, task)
+			}
 		}
 	}
 
+	var text string
 	emptyTask := model.Task{}
-
 	// Todo tasks
 	if len(todoTasks) > 0 {
 		p.list.AddItem(TODO_HEADER, "", 0, nil)
@@ -199,7 +209,14 @@ func (p *TaskPanel) classifyTasks(tasks []model.Task) {
 
 		for _, task := range todoTasks {
 			p.addTaskToList(task)
-			p.list.AddItem(renderTaskTitle(task), "", 0, func() func() {
+
+			dueDate := task.DueDate.Format("2006-01-02")
+			if p.filter == "search" {
+				text = fmt.Sprintf("%v    [lime::i]-- Due: %v", renderTaskTitle(task), dueDate)
+			} else {
+				text = renderTaskTitle(task)
+			}
+			p.list.AddItem(text, "", 0, func() func() {
 				return func() { p.activateTask(task) }
 			}())
 		}
@@ -212,12 +229,59 @@ func (p *TaskPanel) classifyTasks(tasks []model.Task) {
 			p.addTaskToList(emptyTask)
 		}
 
-		p.list.AddItem(COMPLETE_DHEADER, "", 0, nil)
+		p.list.AddItem(COMPLETED_HEADER, "", 0, nil)
 		p.addTaskToList(emptyTask)
 
 		for _, task := range completedTasks {
 			p.addTaskToList(task)
-			p.list.AddItem(renderTaskTitle(task), "", 0, func() func() {
+
+			dueDate := task.DueDate.Format("2006-01-02")
+			if p.filter == "search" {
+				text = fmt.Sprintf("%v    [lime::i]-- Due: %v", renderTaskTitle(task), dueDate)
+			} else {
+				text = renderTaskTitle(task)
+			}
+			p.list.AddItem(text, "", 0, func() func() {
+				return func() { p.activateTask(task) }
+			}())
+		}
+	}
+
+	// Expired tasks
+	if len(expiredTasks) > 0 {
+		p.list.AddItem(EXPIRED_HEADER, "", 0, nil)
+		p.addTaskToList(emptyTask)
+
+		for _, task := range expiredTasks {
+			p.addTaskToList(task)
+
+			dueDate := task.DueDate.Format("2006-01-02")
+			if p.filter == "search" {
+				text = fmt.Sprintf("%v    [lime::i]-- Due: %v", renderTaskTitle(task), dueDate)
+			} else {
+				text = renderTaskTitle(task)
+			}
+			p.list.AddItem(text, "", 0, func() func() {
+				return func() { p.activateTask(task) }
+			}())
+		}
+	}
+
+	// Deleted tasks
+	if len(deletedTasks) > 0 {
+		p.list.AddItem(DELETED_HEADER, "", 0, nil)
+		p.addTaskToList(emptyTask)
+
+		for _, task := range deletedTasks {
+			p.addTaskToList(task)
+
+			dueDate := task.DueDate.Format("2006-01-02")
+			if p.filter == "search" {
+				text = fmt.Sprintf("%v    [lime::i]-- Due: %v", renderTaskTitle(task), dueDate)
+			} else {
+				text = renderTaskTitle(task)
+			}
+			p.list.AddItem(text, "", 0, func() func() {
 				return func() { p.activateTask(task) }
 			}())
 		}

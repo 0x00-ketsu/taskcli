@@ -30,7 +30,7 @@ func (p *StatusPanel) setDefaultHint() {
 	p.hint.
 		SetTextColor(tcell.ColorBlue).
 		SetTextAlign(tview.AlignLeft).
-		SetText("q: quit, ?: help")
+		SetText("q: quit, ?: help, /: search")
 }
 
 func (p *StatusPanel) restore() {

@@ -16,18 +16,25 @@ func setKeyboardShortcuts() *tview.Application {
 			return event
 		}
 
-		switch {
-		case event.Rune() == 'q':
+		switch event.Rune() {
+		case 'q':
 			app.Stop()
 			return nil
-
-		case event.Rune() == '?':
+		case '/':
+			app.SetFocus(searchPanel)
+			return nil
+		case '?':
 			layout.Clear().AddItem(helpPanel, 0, 1, true)
 			app.SetFocus(helpPanel)
 			return nil
+		}
 
+		switch {
 		case filterPanel.HasFocus():
 			event = handleFilterPanelShortcuts(app, event)
+
+		case searchPanel.HasFocus():
+			event = handleSearchPanelShortcuts(app, event)
 
 		case taskPanel.HasFocus():
 			event = handleTaskPanelShortcuts(app, event)
@@ -71,12 +78,24 @@ func handleFilterPanelShortcuts(app *tview.Application, event *tcell.EventKey) *
 	return event
 }
 
+// Shortcuts for Search panel
+func handleSearchPanelShortcuts(app *tview.Application, event *tcell.EventKey) *tcell.EventKey {
+	// this := searchPanel
+	switch event.Key() {
+	case tcell.KeyEsc:
+		app.SetFocus(filterPanel)
+		return nil
+	}
+
+	return event
+}
+
 // Shortcuts for Task panel
 func handleTaskPanelShortcuts(app *tview.Application, event *tcell.EventKey) *tcell.EventKey {
 	this := taskPanel
 
 	switch event.Key() {
-	case tcell.KeyESC:
+	case tcell.KeyEsc:
 		app.SetFocus(filterPanel)
 		return nil
 	case tcell.KeyRune:

@@ -13,6 +13,7 @@
 ![](./_assets/s1.png)
 ![](./_assets/s2.png)
 ![](./_assets/s3.png)
+![](./_assets/s4.png)
 
 ## 🌟 Features
 
@@ -73,6 +74,8 @@ Flags:
 |  Filter Panel   |   `g`  |  Go to first item   |
 |  Filter Panel   |   `G`  |  Go to last item   |
 |  Filter Panel   |   `Enter`  | Activate task    |
+|  Search Panel   |   `Esc`  |  Back to Filter panel   |
+|  Search Panel   |   `Tab`  | Change field    |
 |  Task Panel   | `n`    | Create a new task    |
 |  Task Panel   | `j`    | Move to next item    |
 |  Task Panel   | `k`    | Move to previous item    |

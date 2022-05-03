@@ -14,6 +14,7 @@ var (
 
 	todayPanel      *TodayPanel
 	filterPanel     *FilterPanel
+	searchPanel     *SearchPanel
 	taskPanel       *TaskPanel
 	taskDetailPanel *TaskDetailPanel
 	menuPanel       *MenuPanel
@@ -31,6 +32,7 @@ func Load() *tview.Flex {
 	// GUI panels
 	todayPanel = NewTodayPanel()
 	filterPanel = NewFilterPanel()
+	searchPanel = NewSearchPanel()
 	taskPanel = NewTaskPanel()
 	taskDetailPanel = NewTaskDetailPanel()
 	menuPanel = NewMenuPanel()
@@ -42,7 +44,8 @@ func Load() *tview.Flex {
 	main.AddItem(
 		tview.NewFlex().SetDirection(tview.FlexRow).
 			AddItem(todayPanel, 3, 1, false).
-			AddItem(filterPanel, 0, 1, true),
+			AddItem(filterPanel, 0, 1, true).
+			AddItem(searchPanel, 0, 1, false),
 		35, 1, true)
 	main.AddItem(taskPanel, 0, 2, false)
 

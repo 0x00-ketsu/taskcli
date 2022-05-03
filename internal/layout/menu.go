@@ -146,7 +146,7 @@ func (p *MenuPanel) open() {
 	app := global.App
 	curItemIndex := taskPanel.list.GetCurrentItem()
 	curItemText, _ := taskPanel.list.GetItemText(curItemIndex)
-	if curItemText != TODO_HEADER && curItemText != COMPLETE_DHEADER && curItemText != "" {
+	if curItemText != TODO_HEADER && curItemText != COMPLETED_HEADER && curItemText != "" {
 		layout.
 			RemoveItem(statusPanel).
 			AddItem(p, p.getSize(), 1, true).

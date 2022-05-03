@@ -3,13 +3,14 @@ package bolt
 import (
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/0x00-ketsu/taskcli/internal/model"
 	"github.com/0x00-ketsu/taskcli/internal/repository"
 	"github.com/0x00-ketsu/taskcli/internal/utils"
-	"github.com/asdine/storm/q"
 	"github.com/asdine/storm/v3"
+	"github.com/asdine/storm/v3/q"
 )
 
 type TaskBolt struct {
@@ -33,6 +34,29 @@ func (t *TaskBolt) GetTodayTodoCount() int {
 		return 0
 	} else {
 		return len(tasks)
+	}
+}
+
+// Search returns match tasks with search fields
+func (t TaskBolt) Search(title string, isCompleted, isDeleted bool) ([]model.Task, error) {
+	var tasks []model.Task
+
+	matchers := []q.Matcher{q.Eq("IsCompleted", isCompleted), q.Eq("IsDeleted", isDeleted)}
+	err := t.DB.
+		Select(matchers...).
+		OrderBy("DueDate", "CreatedAt").
+		Reverse().
+		Find(&tasks)
+	if err != nil {
+		return tasks, err
+	} else {
+		var filteredTasks []model.Task
+		for _, task := range tasks {
+			if strings.Contains(task.Title, title) {
+				filteredTasks = append(filteredTasks, task)
+			}
+		}
+		return filteredTasks, nil
 	}
 }
 
@@ -65,7 +89,7 @@ func (t *TaskBolt) GetAllExpired() ([]model.Task, error) {
 
 	today := utils.ToDate(time.Now())
 	err := t.DB.
-		Select(q.Lt("DueDate", today), q.Eq("IsCompleted", false)).
+		Select(q.Lt("DueDate", today), q.Eq("IsCompleted", false), q.Eq("IsDeleted", false)).
 		OrderBy("CreatedAt").
 		Reverse().
 		Find(&tasks)

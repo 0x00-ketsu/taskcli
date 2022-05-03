@@ -19,6 +19,7 @@ func NewHelpPanel() *HelpPanel {
 		AddItem(drawBanner(), 9, 1, false).
 		AddItem(drawGlobal(), 4, 1, false).
 		AddItem(drawFilter(), 6, 1, false).
+		AddItem(drawSearch(), 4, 1, false).
 		AddItem(drawTask(), 7, 1, false).
 		AddItem(drawTaskDetail(), 15, 1, false).
 		AddItem(tips, 1, 1, false).
@@ -71,6 +72,17 @@ func drawFilter() *tview.Flex {
 	return tview.NewFlex().SetDirection(tview.FlexRow).
 		AddItem(filter, 1, 1, false).
 		AddItem(filterDesc, 5, 1, false)
+}
+
+func drawSearch() *tview.Flex {
+	search := tview.NewTextView().SetText("\tSearch Panel")
+	searchDesc := tview.NewFlex().SetDirection(tview.FlexRow).
+		AddItem(tview.NewTextView().SetTextColor(tcell.ColorLimeGreen).SetText("\t Esc: Back to Filter panel"), 0, 1, false).
+		AddItem(tview.NewTextView().SetTextColor(tcell.ColorLimeGreen).SetText("\t tab: change filed"), 0, 1, false)
+
+	return tview.NewFlex().SetDirection(tview.FlexRow).
+		AddItem(search, 1, 1, false).
+		AddItem(searchDesc, 3, 1, false)
 }
 
 func drawTask() *tview.Flex {
