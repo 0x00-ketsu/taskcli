@@ -1,4 +1,4 @@
-# taskcli
+# Taskcli
  ```markdown
  ________________________________
 < A terminal UI for manage tasks >
