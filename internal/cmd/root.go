@@ -5,7 +5,7 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"github.com/0x00-ketsu/taskcli/cmd/flags"
+	"github.com/0x00-ketsu/taskcli/internal/cmd/flags"
 	"github.com/0x00-ketsu/taskcli/internal/database"
 	"github.com/0x00-ketsu/taskcli/internal/global"
 	"github.com/0x00-ketsu/taskcli/internal/layout"

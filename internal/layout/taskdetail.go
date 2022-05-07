@@ -8,7 +8,7 @@ import (
 	"os/exec"
 	"time"
 
-	"github.com/0x00-ketsu/taskcli/cmd/flags"
+	"github.com/0x00-ketsu/taskcli/internal/cmd/flags"
 	"github.com/0x00-ketsu/taskcli/internal/global"
 	"github.com/0x00-ketsu/taskcli/internal/model"
 	"github.com/0x00-ketsu/taskcli/internal/utils"
