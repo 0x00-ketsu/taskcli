@@ -23,7 +23,7 @@
 
 - Support `markdown` syntax
 
-  If you want to preview markdown in terminal, you can try my another project:
+If you want to preview markdown in terminal, you can try my another project:
 [smooth](https://github.com/0x00-ketsu/smooth)
 
 
