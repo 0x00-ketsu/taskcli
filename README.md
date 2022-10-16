@@ -10,10 +10,7 @@
                 ||     ||
  ```
 
-![](./_assets/s1.png)
-![](./_assets/s2.png)
-![](./_assets/s3.png)
-![](./_assets/s4.png)
+[](https://user-images.githubusercontent.com/16932133/196026551-b9b51e25-a35f-4f4c-bb38-aff134277564.mp4) 
 
 ## 🌟 Features
 
