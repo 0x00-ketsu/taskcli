@@ -12,10 +12,10 @@ import (
 )
 
 var (
-	TODO_HEADER      = "[::b]> Todo items"
-	COMPLETED_HEADER = "[green::b]> Completed"
-	EXPIRED_HEADER   = "[yellow::b]> Expired"
-	DELETED_HEADER   = "[red::b]> Deleted"
+	TODO_HEADER      = "[::b]> Todo items[-::]"
+	COMPLETED_HEADER = "[green::b]> Completed[-::]"
+	EXPIRED_HEADER   = "[yellow::b]> Expired[-::]"
+	DELETED_HEADER   = "[red::b]> Deleted[-::]"
 )
 
 type TaskPanel struct {
@@ -203,8 +203,9 @@ func (p *TaskPanel) classifyTasks(tasks []model.Task) {
 	var text string
 	emptyTask := model.Task{}
 	// Todo tasks
-	if len(todoTasks) > 0 {
-		p.list.AddItem(TODO_HEADER, "", 0, nil)
+	todoCount := len(todoTasks)
+	if todoCount > 0 {
+		p.list.AddItem(fmt.Sprintf("%s [green::](%d)[-::]", TODO_HEADER, todoCount), "", 0, nil)
 		p.addTaskToList(emptyTask)
 
 		for _, task := range todoTasks {
@@ -220,6 +221,9 @@ func (p *TaskPanel) classifyTasks(tasks []model.Task) {
 				return func() { p.activateTask(task) }
 			}())
 		}
+
+		// Select first todo task item
+		p.list.SetCurrentItem(1)
 	}
 
 	// Completed tasks
