@@ -8,26 +8,26 @@ import (
 	"github.com/rivo/tview"
 )
 
-type TodayPanel struct {
+type TodayView struct {
 	*tview.Flex
 	hint *tview.TextView
 }
 
-func NewTodayPanel() *TodayPanel {
-	panel := TodayPanel{
+func NewTodayView() *TodayView {
+	view := TodayView{
 		Flex: tview.NewFlex(),
 		hint: tview.NewTextView().SetTextColor(tcell.ColorGreen),
 	}
 
 	hint := renderHint()
-	panel.hint.SetText(hint)
-	panel.AddItem(panel.hint, 0, 1, false)
-	panel.SetBorder(true).SetTitle("Today").SetTitleAlign(tview.AlignLeft)
+	view.hint.SetText(hint)
+	view.AddItem(view.hint, 0, 1, false)
+	view.SetBorder(true).SetTitle("Today").SetTitleAlign(tview.AlignLeft)
 
-	return &panel
+	return &view
 }
 
-func (p *TodayPanel) updateTodoCount() {
+func (p *TodayView) updateTodoCount() {
 	hint := renderHint()
 	p.hint.SetText(hint)
 }

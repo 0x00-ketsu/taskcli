@@ -8,18 +8,18 @@ import (
 	"github.com/rivo/tview"
 )
 
-// Declare all panels
+// Declare all views
 var (
 	layout, main *tview.Flex
 
-	todayPanel      *TodayPanel
-	filterPanel     *FilterPanel
-	searchPanel     *SearchPanel
-	taskPanel       *TaskPanel
-	taskDetailPanel *TaskDetailPanel
-	menuPanel       *MenuPanel
-	statusPanel     *StatusPanel
-	helpPanel       *HelpPanel
+	todayView      *TodayView
+	filterView     *FilterView
+	searchView     *SearchView
+	taskView       *TaskView
+	taskDetailView *TaskDetailView
+	menuView       *MenuView
+	statusView     *StatusView
+	helpView       *HelpView
 )
 
 // Declare package global variables
@@ -29,30 +29,30 @@ var (
 )
 
 func Load() *tview.Flex {
-	// GUI panels
-	todayPanel = NewTodayPanel()
-	filterPanel = NewFilterPanel()
-	searchPanel = NewSearchPanel()
-	taskPanel = NewTaskPanel()
-	taskDetailPanel = NewTaskDetailPanel()
-	menuPanel = NewMenuPanel()
-	statusPanel = NewStatusPanel(global.App)
-	helpPanel = NewHelpPanel()
+	// GUI views
+	todayView = NewTodayView()
+	filterView = NewFilterView()
+	searchView = NewSearchView()
+	taskView = NewTaskView()
+	taskDetailView = NewTaskDetailView()
+	menuView = NewMenuView()
+	statusView = NewStatusView(global.App)
+	helpView = NewHelpView()
 
 	// GUI main
 	main = tview.NewFlex()
 	main.AddItem(
 		tview.NewFlex().SetDirection(tview.FlexRow).
-			AddItem(todayPanel, 3, 1, false).
-			AddItem(filterPanel, 0, 1, true).
-			AddItem(searchPanel, 0, 1, false),
+			AddItem(todayView, 3, 1, false).
+			AddItem(filterView, 0, 1, true).
+			AddItem(searchView, 0, 1, false),
 		35, 1, true)
-	main.AddItem(taskPanel, 0, 2, false)
+	main.AddItem(taskView, 0, 2, false)
 
 	// GUI root layout
 	layout = tview.NewFlex().SetDirection(tview.FlexRow).
 		AddItem(main, 0, 1, true).
-		AddItem(statusPanel, 1, 1, false)
+		AddItem(statusView, 1, 1, false)
 
 	// Bind keyboard shortcuts
 	setKeyboardShortcuts()

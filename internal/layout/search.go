@@ -12,25 +12,25 @@ var (
 	isCompletedFlag bool
 )
 
-type SearchPanel struct {
+type SearchView struct {
 	*tview.Flex
 	form *tview.Form
 }
 
-func NewSearchPanel() *SearchPanel {
-	panel := SearchPanel{
+func NewSearchView() *SearchView {
+	view := SearchView{
 		Flex: tview.NewFlex(),
 		form: tview.NewForm(),
 	}
-	panel.init()
+	view.init()
 
-	panel.AddItem(panel.form, 0, 1, true)
-	panel.SetBorder(true).SetTitle(" Search ")
+	view.AddItem(view.form, 0, 1, true)
+	view.SetBorder(true).SetTitle(" Search ")
 
-	return &panel
+	return &view
 }
 
-func (p *SearchPanel) init() {
+func (p *SearchView) init() {
 	p.form.
 		AddInputField("Title:", "", 20, nil, getInputTitle).
 		AddCheckbox("IsCompleted:", false, getChkIsCompleted).
@@ -40,28 +40,28 @@ func (p *SearchPanel) init() {
 }
 
 // Search tasks
-func (p *SearchPanel) search() {
-	taskPanel.clearTaskList()
-	taskPanel.RemoveItem(taskPanel.hint)
+func (p *SearchView) search() {
+	taskView.clearTaskList()
+	taskView.RemoveItem(taskView.hint)
 
 	tasks, err := global.TaskRepo.Search(titleVal, isCompletedFlag, isDeletedFlag)
 	if err != nil {
-		statusPanel.showForSeconds("[red]Search failed, error: "+err.Error(), 5)
+		statusView.showForSeconds("[red]Search failed, error: "+err.Error(), 5)
 		return
 	} else {
-		taskPanel.filter = "search"
-		taskPanel.RemoveItem(taskPanel.hint)
-		taskPanel.renderTaskList(tasks)
-		statusPanel.showForSeconds("[yellow]Displaying tasks of search", 3)
+		taskView.filter = "search"
+		taskView.RemoveItem(taskView.hint)
+		taskView.renderTaskList(tasks)
+		statusView.showForSeconds("[yellow]Displaying tasks of search", 3)
 
 		app := global.App
-		app.SetFocus(taskPanel)
-		removeTaskDetailPanel()
+		app.SetFocus(taskView)
+		removeTaskDetailView()
 	}
 }
 
 // Reset form
-func (p *SearchPanel) reset() {
+func (p *SearchView) reset() {
 	p.form.Clear(true)
 	p.init()
 

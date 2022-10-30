@@ -10,35 +10,35 @@ import (
 var SEP = "[::d]" + strings.Repeat(string(tcell.RuneS3), 35)
 
 // Filter panel
-type FilterPanel struct {
+type FilterView struct {
 	*tview.Flex
 	list *tview.List
 }
 
-func NewFilterPanel() *FilterPanel {
-	panel := FilterPanel{
+func NewFilterView() *FilterView {
+	view := FilterView{
 		Flex: tview.NewFlex(),
 		list: tview.NewList().ShowSecondaryText(false),
 	}
 
-	panel.AddItem(panel.list, 0, 1, true)
-	panel.SetBorder(true).
+	view.AddItem(view.list, 0, 1, true)
+	view.SetBorder(true).
 		SetTitle(" Filter ")
 
-	panel.list.AddItem(" 📅 Today", "", 0, func() { taskPanel.loadFilterTasks("today") }).
-		AddItem(" 📅 Tomorrow", "", 0, func() { taskPanel.loadFilterTasks("tomorrow") }).
-		AddItem(" 📅 Last 7 days", "", 0, func() { taskPanel.loadFilterTasks("last 7 days") }).
+	view.list.AddItem(" 📅 Today", "", 0, func() { taskView.loadFilterTasks("today") }).
+		AddItem(" 📅 Tomorrow", "", 0, func() { taskView.loadFilterTasks("tomorrow") }).
+		AddItem(" 📅 Last 7 days", "", 0, func() { taskView.loadFilterTasks("last 7 days") }).
 		AddItem(SEP, "", 0, nil).
-		AddItem(" ✅ [green]Completed[white]", "", 0, func() { taskPanel.loadFilterTasks("completed") }).
-		AddItem(" 💁 [yellow]Expired[white]", "", 0, func() { taskPanel.loadFilterTasks("expired") }).
-		AddItem(" 🚮 [red]Trash[white]", "", 0, func() { taskPanel.loadFilterTasks("trash") })
+		AddItem(" ✅ [green]Completed[white]", "", 0, func() { taskView.loadFilterTasks("completed") }).
+		AddItem(" 💁 [yellow]Expired[white]", "", 0, func() { taskView.loadFilterTasks("expired") }).
+		AddItem(" 🚮 [red]Trash[white]", "", 0, func() { taskView.loadFilterTasks("trash") })
 
-	return &panel
+	return &view
 }
 
 // Move to next item
 // Skip sepreation line
-func (p *FilterPanel) lineDown() {
+func (p *FilterView) lineDown() {
 	curItemIndex := p.list.GetCurrentItem()
 	itemCount := p.list.GetItemCount()
 
@@ -54,7 +54,7 @@ func (p *FilterPanel) lineDown() {
 
 // Move to previous item
 // Skip sepreation line
-func (p *FilterPanel) lineUp() {
+func (p *FilterView) lineUp() {
 	curItemIndex := p.list.GetCurrentItem()
 	itemCount := p.list.GetItemCount()
 

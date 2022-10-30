@@ -8,8 +8,8 @@ import (
 
 var blankCell = tview.NewTextView()
 
-func removeTaskDetailPanel() {
-	main.RemoveItem(taskDetailPanel)
+func removeTaskDetailView() {
+	main.RemoveItem(taskDetailView)
 }
 
 func getTaskTitleColor(task model.Task) string {

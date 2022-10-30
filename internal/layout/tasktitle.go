@@ -9,7 +9,7 @@ import (
 	"github.com/rivo/tview"
 )
 
-// TaskDetailHeader displays Task title and relevant action in TaskDetail panel
+// TaskDetailHeader displays Task title and relevant action in TaskDetail view
 type TaskDetailHeader struct {
 	*tview.Flex
 	pages       *tview.Pages
@@ -50,10 +50,10 @@ func (p *TaskDetailHeader) bindRenameEvent() *tview.InputField {
 			if !validateTaskName(name) {
 				return
 			}
-			taskPanel.renameCurrentTask(p.task, name)
+			taskView.renameCurrentTask(p.task, name)
 			p.setTitle(p.task)
 			p.pages.SwitchToPage("title")
-			taskPanel.reloadTasks()
+			taskView.reloadTasks()
 		case tcell.KeyEsc:
 			p.pages.SwitchToPage("title")
 		}

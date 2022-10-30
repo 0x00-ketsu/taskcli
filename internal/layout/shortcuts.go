@@ -21,41 +21,41 @@ func setKeyboardShortcuts() *tview.Application {
 			app.Stop()
 			return nil
 		case '/':
-			app.SetFocus(searchPanel)
+			app.SetFocus(searchView)
 			return nil
 		case '?':
-			layout.Clear().AddItem(helpPanel, 0, 1, true)
-			app.SetFocus(helpPanel)
+			layout.Clear().AddItem(helpView, 0, 1, true)
+			app.SetFocus(helpView)
 			return nil
 		}
 
 		switch {
-		case filterPanel.HasFocus():
-			event = handleFilterPanelShortcuts(app, event)
+		case filterView.HasFocus():
+			event = handleFilterViewShortcuts(app, event)
 
-		case searchPanel.HasFocus():
-			event = handleSearchPanelShortcuts(app, event)
+		case searchView.HasFocus():
+			event = handleSearchViewShortcuts(app, event)
 
-		case taskPanel.HasFocus():
-			event = handleTaskPanelShortcuts(app, event)
+		case taskView.HasFocus():
+			event = handleTaskViewShortcuts(app, event)
 
-		case taskDetailPanel.HasFocus():
-			event = handleTaskDetailPanelShortcuts(app, event)
+		case taskDetailView.HasFocus():
+			event = handleTaskDetailViewShortcuts(app, event)
 
-		case menuPanel.HasFocus():
-			event = handleMenuPanelShortcuts(event)
+		case menuView.HasFocus():
+			event = handleMenuViewShortcuts(event)
 
-		case helpPanel.HasFocus():
-			event = handleHelpPanelShortcuts(app, event)
+		case helpView.HasFocus():
+			event = handleHelpViewShortcuts(app, event)
 		}
 
 		return event
 	})
 }
 
-// Shortcuts for Filter panel
-func handleFilterPanelShortcuts(app *tview.Application, event *tcell.EventKey) *tcell.EventKey {
-	this := filterPanel
+// Shortcuts for Filter view
+func handleFilterViewShortcuts(app *tview.Application, event *tcell.EventKey) *tcell.EventKey {
+	this := filterView
 
 	switch event.Key() {
 	case tcell.KeyRune:
@@ -78,25 +78,25 @@ func handleFilterPanelShortcuts(app *tview.Application, event *tcell.EventKey) *
 	return event
 }
 
-// Shortcuts for Search panel
-func handleSearchPanelShortcuts(app *tview.Application, event *tcell.EventKey) *tcell.EventKey {
-	// this := searchPanel
+// Shortcuts for Search view
+func handleSearchViewShortcuts(app *tview.Application, event *tcell.EventKey) *tcell.EventKey {
+	// this := searchView
 	switch event.Key() {
 	case tcell.KeyEsc:
-		app.SetFocus(filterPanel)
+		app.SetFocus(filterView)
 		return nil
 	}
 
 	return event
 }
 
-// Shortcuts for Task panel
-func handleTaskPanelShortcuts(app *tview.Application, event *tcell.EventKey) *tcell.EventKey {
-	this := taskPanel
+// Shortcuts for Task view
+func handleTaskViewShortcuts(app *tview.Application, event *tcell.EventKey) *tcell.EventKey {
+	this := taskView
 
 	switch event.Key() {
 	case tcell.KeyEsc:
-		app.SetFocus(filterPanel)
+		app.SetFocus(filterView)
 		return nil
 	case tcell.KeyRune:
 		switch event.Rune() {
@@ -116,7 +116,7 @@ func handleTaskPanelShortcuts(app *tview.Application, event *tcell.EventKey) *tc
 			this.list.SetCurrentItem(this.list.GetItemCount() - 1)
 			return nil
 		case 'm':
-			menuPanel.open()
+			menuView.open()
 			return nil
 		}
 	}
@@ -124,13 +124,13 @@ func handleTaskPanelShortcuts(app *tview.Application, event *tcell.EventKey) *tc
 	return event
 }
 
-func handleTaskDetailPanelShortcuts(app *tview.Application, event *tcell.EventKey) *tcell.EventKey {
-	this := taskDetailPanel
+func handleTaskDetailViewShortcuts(app *tview.Application, event *tcell.EventKey) *tcell.EventKey {
+	this := taskDetailView
 
 	switch event.Key() {
 	case tcell.KeyEsc:
-		removeTaskDetailPanel()
-		app.SetFocus(taskPanel)
+		removeTaskDetailView()
+		app.SetFocus(taskView)
 		return nil
 	case tcell.KeyCtrlD:
 		this.contentView.ScrollDown(1)
@@ -182,9 +182,9 @@ func handleTaskDetailPanelShortcuts(app *tview.Application, event *tcell.EventKe
 	return event
 }
 
-// Shortcuts for Menu panel
-func handleMenuPanelShortcuts(event *tcell.EventKey) *tcell.EventKey {
-	this := menuPanel
+// Shortcuts for Menu view
+func handleMenuViewShortcuts(event *tcell.EventKey) *tcell.EventKey {
+	this := menuView
 	totalItemCount := this.choice.items.GetItemCount()
 	currentItemIndex := this.choice.items.GetCurrentItem()
 	prevItemIndex := currentItemIndex - 1
@@ -192,7 +192,7 @@ func handleMenuPanelShortcuts(event *tcell.EventKey) *tcell.EventKey {
 
 	switch event.Key() {
 	case tcell.KeyEsc:
-		closeMenuPanel()
+		closeMenuView()
 		return nil
 	case tcell.KeyRune:
 		switch event.Rune() {
@@ -218,19 +218,19 @@ func handleMenuPanelShortcuts(event *tcell.EventKey) *tcell.EventKey {
 	return event
 }
 
-// Shortcuts for Help panel
-func handleHelpPanelShortcuts(app *tview.Application, event *tcell.EventKey) *tcell.EventKey {
+// Shortcuts for Help view
+func handleHelpViewShortcuts(app *tview.Application, event *tcell.EventKey) *tcell.EventKey {
 	switch event.Rune() {
 	case 'q':
 		layout.Clear().
 			AddItem(main, 0, 1, true).
-			AddItem(statusPanel, 1, 1, false)
+			AddItem(statusView, 1, 1, false)
 		app.SetFocus(main)
 		return nil
 	default:
 		layout.Clear().
 			AddItem(main, 0, 1, true).
-			AddItem(statusPanel, 1, 1, false)
+			AddItem(statusView, 1, 1, false)
 		app.SetFocus(main)
 		return event
 	}

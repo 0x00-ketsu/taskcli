@@ -24,7 +24,7 @@ var (
 	dateHumanLayout = "02 Jan, Monday"
 )
 
-type TaskDetailPanel struct {
+type TaskDetailView struct {
 	*tview.Flex
 	header      *TaskDetailHeader
 	contentHint *tview.TextView
@@ -38,8 +38,8 @@ type TaskDetailPanel struct {
 	taskToggleStatus   *tview.Button
 }
 
-func NewTaskDetailPanel() *TaskDetailPanel {
-	panel := TaskDetailPanel{
+func NewTaskDetailView() *TaskDetailView {
+	view := TaskDetailView{
 		Flex:               tview.NewFlex().SetDirection(tview.FlexRow),
 		header:             NewTaskDetailHeader(),
 		contentHint:        tview.NewTextView(),
@@ -48,45 +48,45 @@ func NewTaskDetailPanel() *TaskDetailPanel {
 		taskToggleStatus:   makeButton("Uncompleted", nil).SetLabelColor(tcell.ColorGray),
 	}
 
-	panel.loadEditor()
+	view.loadEditor()
 
-	panel.taskToggleStatus.SetSelectedFunc(func() {
-		panel.toggleTaskStatus()
+	view.taskToggleStatus.SetSelectedFunc(func() {
+		view.toggleTaskStatus()
 	})
-	panel.contentHint = tview.NewTextView().
+	view.contentHint = tview.NewTextView().
 		SetText(" i = insert, c = copy, h/j/k/l = move cursor, v = external editor").
 		SetTextColor(tcell.ColorDimGray)
-	panel.statusHint = tview.NewTextView().
+	view.statusHint = tview.NewTextView().
 		SetTextColor(tcell.ColorDimGray).
 		SetText(" <space> to toggle task status")
 
 	editorLabel := tview.NewFlex().
 		AddItem(tview.NewTextView().SetText("[lime::b]Task Content").SetDynamicColors(true), 0, 1, false)
 	editorHelp := tview.NewFlex().
-		AddItem(panel.contentHint, 0, 1, false).
+		AddItem(view.contentHint, 0, 1, false).
 		AddItem(tview.NewTextView().SetTextAlign(tview.AlignRight).
 			SetText(fmt.Sprintf("syntax:markdown (%v)", "monokai")).
 			SetTextColor(tcell.ColorDimGray), 0, 1, false)
 
-	panel.
-		AddItem(panel.header, 3, 1, true).
+	view.
+		AddItem(view.header, 3, 1, true).
 		AddItem(blankCell, 1, 1, false).
-		AddItem(panel.makeDateRow(), 1, 1, true).
+		AddItem(view.makeDateRow(), 1, 1, true).
 		AddItem(blankCell, 1, 1, false).
 		AddItem(editorLabel, 1, 1, false).
-		AddItem(panel.contentView, 0, 10, false).
+		AddItem(view.contentView, 0, 10, false).
 		AddItem(editorHelp, 1, 1, false).
 		AddItem(blankCell, 0, 1, false).
-		AddItem(panel.statusHint, 1, 1, false).
-		AddItem(panel.taskToggleStatus, 1, 1, false)
+		AddItem(view.statusHint, 1, 1, false).
+		AddItem(view.taskToggleStatus, 1, 1, false)
 
-	panel.SetBorder(true).SetTitle(" Task Detail ")
+	view.SetBorder(true).SetTitle(" Task Detail ")
 
-	return &panel
+	return &view
 }
 
 // Loads and shows task detail
-func (p *TaskDetailPanel) setTask(task *model.Task) {
+func (p *TaskDetailView) setTask(task *model.Task) {
 	p.task = task
 
 	p.header.setTitle(task)
@@ -98,7 +98,7 @@ func (p *TaskDetailPanel) setTask(task *model.Task) {
 	p.deactivateEditor()
 }
 
-func (p *TaskDetailPanel) activateEditor() {
+func (p *TaskDetailView) activateEditor() {
 	p.contentView.Readonly = false
 	p.contentView.SetBorderColor(tcell.ColorDarkOrange)
 	p.contentHint.SetText(" Esc to save changes")
@@ -107,7 +107,7 @@ func (p *TaskDetailPanel) activateEditor() {
 	app.SetFocus(p.contentView)
 }
 
-func (p *TaskDetailPanel) deactivateEditor() {
+func (p *TaskDetailView) deactivateEditor() {
 	p.contentView.Readonly = true
 	p.contentView.SetBorderColor(tcell.ColorLightSlateGray)
 	p.contentHint.SetText(" i = insert, c = copy, h/j/k/l = move cursor, v = external editor")
@@ -116,10 +116,10 @@ func (p *TaskDetailPanel) deactivateEditor() {
 	app.SetFocus(p)
 }
 
-func (p *TaskDetailPanel) editInExternalEditor() {
+func (p *TaskDetailView) editInExternalEditor() {
 	tmpFileName, err := utils.WriteToTempFile(p.task.Content, "taskcli_note_*.md")
 	if err != nil {
-		statusPanel.showForSeconds("[red]Failed to create tmp file. Try in-app editing by pressing i", 5)
+		statusView.showForSeconds("[red]Failed to create tmp file. Try in-app editing by pressing i", 5)
 		return
 	}
 
@@ -144,7 +144,7 @@ func (p *TaskDetailPanel) editInExternalEditor() {
 	})
 
 	if messageToShow != "" {
-		statusPanel.showForSeconds(messageToShow, 10)
+		statusView.showForSeconds(messageToShow, 10)
 	}
 
 	if updatedContent != "" {
@@ -158,7 +158,7 @@ func (p *TaskDetailPanel) editInExternalEditor() {
 }
 
 // Load detail edit view
-func (p *TaskDetailPanel) loadEditor() {
+func (p *TaskDetailView) loadEditor() {
 	p.contentView = femto.NewView(makeBufferFromString(""))
 	p.contentView.SetRuntimeFiles(runtime.Files)
 
@@ -183,19 +183,19 @@ func (p *TaskDetailPanel) loadEditor() {
 	})
 }
 
-func (p *TaskDetailPanel) updateTaskContent(content string) {
+func (p *TaskDetailView) updateTaskContent(content string) {
 	repo := global.TaskRepo
 
 	p.task.Content = content
 	if err := repo.UpdateField(p.task, "Content", content); err != nil {
 		msg := fmt.Sprintf("[red]Save content failed, error: %v", err.Error())
-		statusPanel.showForSeconds(msg, 5)
+		statusView.showForSeconds(msg, 5)
 	} else {
-		statusPanel.showForSeconds("[green]Save content successful", 5)
+		statusView.showForSeconds("[green]Save content successful", 5)
 	}
 }
 
-func (p *TaskDetailPanel) makeDateRow() *tview.Flex {
+func (p *TaskDetailView) makeDateRow() *tview.Flex {
 	app := global.App
 	p.taskDueDate = makeLightTextInput("YYYY-mm-dd").
 		SetLabel("Set: ").
@@ -206,11 +206,11 @@ func (p *TaskDetailPanel) makeDateRow() *tview.Flex {
 			case tcell.KeyEnter:
 				if date, err := utils.ParseStrToDate(p.taskDueDate.GetText(), dateLayout); err != nil {
 					p.taskDueDate.SetBorderColor(tcell.ColorRed)
-					statusPanel.showForSeconds("[red]Input new due date is invalid", 5)
+					statusView.showForSeconds("[red]Input new due date is invalid", 5)
 				} else {
 					if date.Before(today) {
 						p.taskDueDate.SetBorderColor(tcell.ColorRed)
-						statusPanel.showForSeconds("[red]Input new due date should greater than or equal to today", 5)
+						statusView.showForSeconds("[red]Input new due date should greater than or equal to today", 5)
 					} else {
 						p.taskDueDate.SetBorderColor(tcell.ColorDefault)
 						p.setTaskDate(date, true)
@@ -235,12 +235,12 @@ func (p *TaskDetailPanel) makeDateRow() *tview.Flex {
 }
 
 // Update task date if `update` is true
-func (p *TaskDetailPanel) setTaskDate(date time.Time, update bool) {
+func (p *TaskDetailView) setTaskDate(date time.Time, update bool) {
 	if update {
 		repo := global.TaskRepo
 		if err := repo.UpdateField(p.task, "DueDate", date); err != nil {
 			msg := fmt.Sprintf("[red]Update task due date failed, error: %v", err.Error())
-			statusPanel.showForSeconds(msg, 5)
+			statusView.showForSeconds(msg, 5)
 			return
 		}
 	}
@@ -255,7 +255,7 @@ func (p *TaskDetailPanel) setTaskDate(date time.Time, update bool) {
 }
 
 // If task is deleted, hide tips: <space> to toggle task status
-func (p *TaskDetailPanel) updateTaskToggleDisplay() {
+func (p *TaskDetailView) updateTaskToggleDisplay() {
 	if p.task.IsDeleted {
 		p.RemoveItem(p.statusHint)
 		p.taskToggleStatus.SetLabel("Deleted").SetBackgroundColor(tcell.ColorRed)
@@ -274,38 +274,38 @@ func (p *TaskDetailPanel) updateTaskToggleDisplay() {
 	}
 }
 
-func (p *TaskDetailPanel) toggleTaskStatus() {
+func (p *TaskDetailView) toggleTaskStatus() {
 	if !p.task.IsDeleted {
-		taskPanel.toggleTaskStatus(p.task)
+		taskView.toggleTaskStatus(p.task)
 		p.updateTaskToggleDisplay()
 	}
 }
 
-func (p *TaskDetailPanel) todaySelector() {
+func (p *TaskDetailView) todaySelector() {
 	p.setTaskDate(p.task.DueDate, true)
 }
 
-func (p *TaskDetailPanel) nextDaySelector() {
+func (p *TaskDetailView) nextDaySelector() {
 	if date, err := utils.ParseStrToDate(p.taskDueDate.GetText(), dateLayout); err == nil {
 		p.setTaskDate(date.AddDate(0, 0, 1), true)
 	}
 }
 
-func (p *TaskDetailPanel) prevDaySelector() {
+func (p *TaskDetailView) prevDaySelector() {
 	if date, err := utils.ParseStrToDate(p.taskDueDate.GetText(), dateLayout); err == nil {
 		p.setTaskDate(date.AddDate(0, 0, -1), true)
 	}
 }
 
 // Copy task detail to clipboard
-func (p *TaskDetailPanel) copyTaskContent() {
+func (p *TaskDetailView) copyTaskContent() {
 	var content bytes.Buffer
 	content.WriteString(p.task.Content)
 	_ = clipboard.WriteAll(content.String())
 
 	app := global.App
 	app.SetFocus(p)
-	statusPanel.showForSeconds("[green]Task content copyed. Try Pasting anywhere", 5)
+	statusView.showForSeconds("[green]Task content copyed. Try Pasting anywhere", 5)
 }
 
 func makeBufferFromString(content string) *femto.Buffer {

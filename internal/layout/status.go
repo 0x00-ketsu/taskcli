@@ -7,44 +7,44 @@ import (
 	"github.com/rivo/tview"
 )
 
-type StatusPanel struct {
+type StatusView struct {
 	*tview.Flex
 	container *tview.Application
 	hint      *tview.TextView
 }
 
-func NewStatusPanel(app *tview.Application) *StatusPanel {
-	panel := &StatusPanel{
+func NewStatusView(app *tview.Application) *StatusView {
+	view := &StatusView{
 		Flex:      tview.NewFlex(),
 		container: app,
 		hint:      tview.NewTextView().SetDynamicColors(true),
 	}
 
-	panel.setDefaultHint()
-	panel.AddItem(panel.hint, 0, 1, false)
+	view.setDefaultHint()
+	view.AddItem(view.hint, 0, 1, false)
 
-	return panel
+	return view
 }
 
-func (p *StatusPanel) setDefaultHint() {
+func (p *StatusView) setDefaultHint() {
 	p.hint.
 		SetTextColor(tcell.ColorBlue).
 		SetTextAlign(tview.AlignLeft).
 		SetText("q: quit, ?: help, /: search")
 }
 
-func (p *StatusPanel) restore() {
+func (p *StatusView) restore() {
 	p.container.QueueUpdateDraw(func() {
 		p.setDefaultHint()
 	})
 }
 
-// Used to skip queued restore of Status panel
+// Used to skip queued restore of Status view
 // in case of new showForSeconds within waiting period
 var restorInQ = 0
 
-// Show message in Status panel for seconds
-func (p *StatusPanel) showForSeconds(message string, timeout int) {
+// Show message in Status view for seconds
+func (p *StatusView) showForSeconds(message string, timeout int) {
 	if p.container == nil {
 		return
 	}

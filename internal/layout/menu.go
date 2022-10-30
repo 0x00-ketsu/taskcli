@@ -14,7 +14,7 @@ type choice struct {
 	items *tview.List
 }
 
-type MenuPanel struct {
+type MenuView struct {
 	*tview.Pages
 	choice      *choice
 	renameInput *tview.InputField
@@ -31,17 +31,17 @@ const (
 	RENAME_PAGE = "renameInput"
 )
 
-// Common task panel menu items
+// Common task view menu items
 var commonTaskMenus = []menuItem{
 	{
 		name:     "reload tasks",
 		shortcut: 'l',
 		handler: func() func() {
 			return func() {
-				taskPanel.reloadTasks()
+				taskView.reloadTasks()
 
-				removeTaskDetailPanel()
-				closeMenuPanel()
+				removeTaskDetailView()
+				closeMenuView()
 			}
 		},
 	},
@@ -50,30 +50,30 @@ var commonTaskMenus = []menuItem{
 		shortcut: 'r',
 		handler: func() func() {
 			return func() {
-				task := taskPanel.getFocusTask()
+				task := taskView.getFocusTask()
 				currentTitle := task.Title
 
-				menuPanel.Pages.SwitchToPage(RENAME_PAGE)
-				menuPanel.renameInput.SetLabel("New task title: ").
+				menuView.Pages.SwitchToPage(RENAME_PAGE)
+				menuView.renameInput.SetLabel("New task title: ").
 					SetText(currentTitle).
 					SetPlaceholder("Enter new task title").
 					SetPlaceholderTextColor(tcell.ColorDarkSlateBlue).
 					SetFieldTextColor(tcell.ColorBlack).
 					SetFieldBackgroundColor(tcell.ColorLightBlue)
 
-				menuPanel.renameInput.SetDoneFunc(func(key tcell.Key) {
+				menuView.renameInput.SetDoneFunc(func(key tcell.Key) {
 					switch key {
 					case tcell.KeyEnter:
-						newTitle := menuPanel.renameInput.GetText()
-						taskPanel.renameCurrentTask(task, newTitle)
-						menuPanel.Pages.SwitchToPage(MENU_PAGE)
+						newTitle := menuView.renameInput.GetText()
+						taskView.renameCurrentTask(task, newTitle)
+						menuView.Pages.SwitchToPage(MENU_PAGE)
 
-						removeTaskDetailPanel()
-						closeMenuPanel()
+						removeTaskDetailView()
+						closeMenuView()
 						return
 						// }
 					case tcell.KeyEsc:
-						menuPanel.Pages.SwitchToPage(MENU_PAGE)
+						menuView.Pages.SwitchToPage(MENU_PAGE)
 					}
 				})
 			}
@@ -81,18 +81,18 @@ var commonTaskMenus = []menuItem{
 	},
 }
 
-// Normal task panel menu items
+// Normal task view menu items
 var normalTaskMenus = []menuItem{
 	{
 		name:     "toggle the current task status",
 		shortcut: 't',
 		handler: func() func() {
 			return func() {
-				task := taskPanel.getFocusTask()
-				taskPanel.toggleTaskStatus(task)
+				task := taskView.getFocusTask()
+				taskView.toggleTaskStatus(task)
 
-				removeTaskDetailPanel()
-				closeMenuPanel()
+				removeTaskDetailView()
+				closeMenuView()
 			}
 		},
 	},
@@ -101,62 +101,62 @@ var normalTaskMenus = []menuItem{
 		shortcut: 'd',
 		handler: func() func() {
 			return func() {
-				taskPanel.deleteCurrentTask()
+				taskView.deleteCurrentTask()
 
-				removeTaskDetailPanel()
-				closeMenuPanel()
+				removeTaskDetailView()
+				closeMenuView()
 			}
 		},
 	},
 }
 
-// Deleted task panel menu items
+// Deleted task view menu items
 var deletedTaskMenus = []menuItem{
 	{
 		name:     "[green]restore[white] the current task",
 		shortcut: 's',
 		handler: func() func() {
 			return func() {
-				taskPanel.restoreCurrentTask()
+				taskView.restoreCurrentTask()
 
-				removeTaskDetailPanel()
-				closeMenuPanel()
+				removeTaskDetailView()
+				closeMenuView()
 			}
 		},
 	},
 }
 
-// NewMenuPanel displays menu panel
+// NewMenuView displays menu view
 // NOTE: current only works for Task
-func NewMenuPanel() *MenuPanel {
-	panel := MenuPanel{
+func NewMenuView() *MenuView {
+	view := MenuView{
 		Pages:       tview.NewPages(),
 		renameInput: tview.NewInputField(),
 	}
-	panel.SetBorder(true)
+	view.SetBorder(true)
 
-	return &panel
+	return &view
 }
 
-// Open Menu Panel and focus
-func (p *MenuPanel) open() {
-	focusTask := taskPanel.getFocusTask()
+// Open Menu view and focus
+func (p *MenuView) open() {
+	focusTask := taskView.getFocusTask()
 	p.loadMenus(*focusTask)
 
 	app := global.App
-	curItemIndex := taskPanel.list.GetCurrentItem()
-	curItemText, _ := taskPanel.list.GetItemText(curItemIndex)
+	curItemIndex := taskView.list.GetCurrentItem()
+	curItemText, _ := taskView.list.GetItemText(curItemIndex)
 	if curItemText != TODO_HEADER && curItemText != COMPLETED_HEADER && curItemText != "" {
 		layout.
-			RemoveItem(statusPanel).
+			RemoveItem(statusView).
 			AddItem(p, p.getSize(), 1, true).
-			AddItem(statusPanel, 1, 1, false)
+			AddItem(statusView, 1, 1, false)
 		app.SetFocus(p)
 	}
 
 }
 
-func (p *MenuPanel) loadMenus(task model.Task) {
+func (p *MenuView) loadMenus(task model.Task) {
 	choice := &choice{
 		Flex:  tview.NewFlex().SetDirection(tview.FlexRow),
 		title: tview.NewTextView(),
@@ -175,19 +175,19 @@ func (p *MenuPanel) loadMenus(task model.Task) {
 	p.Pages.AddPage(RENAME_PAGE, p.renameInput, true, false)
 }
 
-// Close Menu panel and focus Task panel
-func closeMenuPanel() {
+// Close Menu view and focus Task view
+func closeMenuView() {
 	app := global.App
-	layout.RemoveItem(menuPanel)
-	app.SetFocus(taskPanel)
+	layout.RemoveItem(menuView)
+	app.SetFocus(taskView)
 }
 
 // Returns the size of MenuPanel rows
-func (p *MenuPanel) getSize() int {
+func (p *MenuView) getSize() int {
 	return p.choice.items.GetItemCount() + 4
 }
 
-// Add menu choices to Menu panel
+// Add menu choices to Menu view
 func (c *choice) addMenuToList(task model.Task) {
 	for _, menu := range commonTaskMenus {
 		c.items.AddItem(menu.name, "", menu.shortcut, menu.handler())

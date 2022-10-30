@@ -5,17 +5,17 @@ import (
 	"github.com/rivo/tview"
 )
 
-type HelpPanel struct {
+type HelpView struct {
 	*tview.Flex
 }
 
-func NewHelpPanel() *HelpPanel {
-	panel := HelpPanel{
+func NewHelpView() *HelpView {
+	view := HelpView{
 		Flex: tview.NewFlex().SetDirection(tview.FlexRow),
 	}
 
 	tips := tview.NewTextView().SetText("\tPress any key to return.")
-	panel.
+	view.
 		AddItem(drawBanner(), 9, 1, false).
 		AddItem(drawGlobal(), 4, 1, false).
 		AddItem(drawFilter(), 6, 1, false).
@@ -25,8 +25,8 @@ func NewHelpPanel() *HelpPanel {
 		AddItem(tips, 1, 1, false).
 		AddItem(tview.NewTextView(), 0, 1, false)
 
-	panel.SetBackgroundColor(tcell.ColorBlack)
-	return &panel
+	view.SetBackgroundColor(tcell.ColorBlack)
+	return &view
 }
 
 // drawBanner ...

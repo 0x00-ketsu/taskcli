@@ -18,21 +18,21 @@ var (
 	DELETED_HEADER   = "[red::b]> Deleted[-::]"
 )
 
-type TaskPanel struct {
+type TaskView struct {
 	*tview.Flex
 	list *tview.List
 	hint *tview.TextView
 
-	filter     string // Filter panel select type
+	filter     string // Filter view select type
 	newTask    *tview.InputField
 	activeTask *model.Task
 	tasks      []model.Task
 }
 
-func NewTaskPanel() *TaskPanel {
+func NewTaskView() *TaskView {
 	app := global.App
 
-	panel := TaskPanel{
+	view := TaskView{
 		Flex:    tview.NewFlex().SetDirection(tview.FlexRow),
 		list:    tview.NewList().ShowSecondaryText(false),
 		hint:    tview.NewTextView().SetTextColor(tcell.ColorYellow).SetTextAlign(tview.AlignCenter),
@@ -40,23 +40,23 @@ func NewTaskPanel() *TaskPanel {
 		newTask: taskInputFiled("+ Add a Task to Today's List"),
 	}
 
-	panel.AddItem(panel.newTask, 1, 0, false).
-		AddItem(panel.list, 0, 1, true).
-		AddItem(panel.hint, 0, 1, false)
+	view.AddItem(view.newTask, 1, 0, false).
+		AddItem(view.list, 0, 1, true).
+		AddItem(view.hint, 0, 1, false)
 
-	panel.SetBorder(true).SetTitle(" Tasks ")
-	panel.setHintMessage()
+	view.SetBorder(true).SetTitle(" Tasks ")
+	view.setHintMessage()
 
 	// Select task
-	panel.list.SetBorderPadding(1, 0, 0, 0)
+	view.list.SetBorderPadding(1, 0, 0, 0)
 
 	// Create new task
-	panel.newTask.SetDoneFunc(func(key tcell.Key) {
+	view.newTask.SetDoneFunc(func(key tcell.Key) {
 		repo := global.TaskRepo
 
 		switch key {
 		case tcell.KeyEnter:
-			name := panel.newTask.GetText()
+			name := view.newTask.GetText()
 			if !validateTaskName(name) {
 				return
 			}
@@ -65,40 +65,40 @@ func NewTaskPanel() *TaskPanel {
 			_, err := repo.Create(name, "")
 			if err != nil {
 				msg := fmt.Sprintf("[red]Create task failed, error: %v", err.Error())
-				statusPanel.showForSeconds(msg, 5)
+				statusView.showForSeconds(msg, 5)
 				return
 			}
-			statusPanel.showForSeconds("[green]Task create successful", 5)
+			statusView.showForSeconds("[green]Task create successful", 5)
 
 			// Reload tasks
-			panel.reloadTasks()
+			view.reloadTasks()
 
 			// Reset
-			panel.newTask.SetText("")
-			app.SetFocus(panel)
+			view.newTask.SetText("")
+			app.SetFocus(view)
 			return
 		case tcell.KeyEsc:
-			panel.newTask.SetText("")
-			app.SetFocus(panel)
+			view.newTask.SetText("")
+			app.SetFocus(view)
 		}
 	})
 
-	return &panel
+	return &view
 }
 
 // Reload tasks based on selected Filter
-func (p *TaskPanel) reloadTasks() {
+func (p *TaskView) reloadTasks() {
 	filter := p.filter
 	tasks, _ := p.getFiterTasks(filter)
 	p.renderTaskList(tasks)
 
-	// update Today panel
-	todayPanel.updateTodoCount()
+	// update Today view
+	todayView.updateTodoCount()
 }
 
-// Loads tasks based on selected item in Filter panel
+// Loads tasks based on selected item in Filter view
 // choices: today, tomorrow, last 7 days
-func (p *TaskPanel) loadFilterTasks(filter string) {
+func (p *TaskView) loadFilterTasks(filter string) {
 	app := global.App
 
 	p.clearTaskList()
@@ -108,22 +108,22 @@ func (p *TaskPanel) loadFilterTasks(filter string) {
 	tasks, err := p.getFiterTasks(filter)
 	if err == storm.ErrIdxNotFound {
 		p.AddItem(p.hint, 0, 1, false)
-		statusPanel.showForSeconds("[yellow]No task in list - "+filter, 5)
+		statusView.showForSeconds("[yellow]No task in list - "+filter, 5)
 	} else if err != nil {
 		p.AddItem(p.hint, 0, 1, false)
-		statusPanel.showForSeconds("[red]Error: "+err.Error(), 5)
+		statusView.showForSeconds("[red]Error: "+err.Error(), 5)
 	} else {
 		p.RemoveItem(p.hint)
 		p.renderTaskList(tasks)
-		statusPanel.showForSeconds("[yellow]Displaying tasks of "+filter, 3)
+		statusView.showForSeconds("[yellow]Displaying tasks of "+filter, 3)
 	}
 
-	app.SetFocus(taskPanel)
-	removeTaskDetailPanel()
+	app.SetFocus(taskView)
+	removeTaskDetailView()
 }
 
-// Get tasks based on selected item in Filter panel
-func (p *TaskPanel) getFiterTasks(filter string) ([]model.Task, error) {
+// Get tasks based on selected item in Filter view
+func (p *TaskView) getFiterTasks(filter string) ([]model.Task, error) {
 	var tasks []model.Task
 	var err error
 
@@ -156,7 +156,7 @@ func (p *TaskPanel) getFiterTasks(filter string) ([]model.Task, error) {
 // Render task list
 // - todo
 // - completed
-func (p *TaskPanel) renderTaskList(tasks []model.Task) {
+func (p *TaskView) renderTaskList(tasks []model.Task) {
 	p.clearTaskList()
 
 	switch p.filter {
@@ -183,7 +183,7 @@ func (p *TaskPanel) renderTaskList(tasks []model.Task) {
 }
 
 // Classify tasks to: todo, completed
-func (p *TaskPanel) classifyTasks(tasks []model.Task) {
+func (p *TaskView) classifyTasks(tasks []model.Task) {
 	var todoTasks, completedTasks, expiredTasks, deletedTasks []model.Task
 
 	for _, task := range tasks {
@@ -294,7 +294,7 @@ func (p *TaskPanel) classifyTasks(tasks []model.Task) {
 
 // Unclassify tasks, display all tasks
 // Extra add due date
-func (p *TaskPanel) unclassifyTasks(tasks []model.Task) {
+func (p *TaskView) unclassifyTasks(tasks []model.Task) {
 	for _, task := range tasks {
 		p.addTaskToList(task)
 
@@ -307,33 +307,33 @@ func (p *TaskPanel) unclassifyTasks(tasks []model.Task) {
 }
 
 // Add a task to task list
-func (p *TaskPanel) addTaskToList(task model.Task) {
+func (p *TaskView) addTaskToList(task model.Task) {
 	p.tasks = append(p.tasks, task)
 }
 
-// Remove all task items from Task panel
-func (p *TaskPanel) clearTaskList() {
+// Remove all task items from Task view
+func (p *TaskView) clearTaskList() {
 	p.list.Clear()
 	p.tasks = nil
 	p.activeTask = nil
 }
 
-// Marks a task is actived & loads detail in Task Detail panel
-func (p *TaskPanel) activateTask(task model.Task) {
+// Marks a task is actived & loads detail in Task Detail view
+func (p *TaskView) activateTask(task model.Task) {
 	app := global.App
 
-	removeTaskDetailPanel()
+	removeTaskDetailView()
 
 	focusTask := p.getFocusTask()
-	taskDetailPanel.setTask(focusTask)
+	taskDetailView.setTask(focusTask)
 
-	main.AddItem(taskDetailPanel, 0, 4, false)
-	app.SetFocus(taskDetailPanel)
+	main.AddItem(taskDetailView, 0, 4, false)
+	app.SetFocus(taskDetailView)
 }
 
-func (p *TaskPanel) setHintMessage() {
+func (p *TaskView) setHintMessage() {
 	if len(p.tasks) == 0 {
-		p.hint.SetText("Welcome to Taskcli!\n------------------------------\n Create Task at the top of Tasks panel.\n (Press n)")
+		p.hint.SetText("Welcome to Taskcli!\n------------------------------\n Create Task at the top of Tasks view.\n (Press n)")
 	} else {
 		p.hint.SetText("Select a Task (Press Enter) to load task detail.\nOr create a new Task (Press n).")
 	}
@@ -341,7 +341,7 @@ func (p *TaskPanel) setHintMessage() {
 
 // Move to next item
 // Skip sepreation line
-func (p *TaskPanel) lineDown() {
+func (p *TaskView) lineDown() {
 	curItemIndex := p.list.GetCurrentItem()
 	itemCount := p.list.GetItemCount()
 
@@ -357,7 +357,7 @@ func (p *TaskPanel) lineDown() {
 
 // Move to previous item
 // Skip sepreation line
-func (p *TaskPanel) lineUp() {
+func (p *TaskView) lineUp() {
 	curItemIndex := p.list.GetCurrentItem()
 	itemCount := p.list.GetItemCount()
 
@@ -371,27 +371,27 @@ func (p *TaskPanel) lineUp() {
 	}
 }
 
-// Get current focus task(pointer) item in Task panel
-func (p *TaskPanel) getFocusTask() *model.Task {
+// Get current focus task(pointer) item in Task view
+func (p *TaskView) getFocusTask() *model.Task {
 	curItemIndex := p.list.GetCurrentItem()
 	return &p.tasks[curItemIndex]
 }
 
 // Toggle task status (completed / uncompleted)
-func (p *TaskPanel) toggleTaskStatus(task *model.Task) {
+func (p *TaskView) toggleTaskStatus(task *model.Task) {
 	repo := global.TaskRepo
 	status := !task.IsCompleted
 	if repo.UpdateField(task, "IsCompleted", status) == nil {
 		task.IsCompleted = status
 		// reload
 		p.reloadTasks()
-		// update Today panel
-		todayPanel.updateTodoCount()
+		// update Today view
+		todayView.updateTodoCount()
 	}
 }
 
 // Rename current focused task title
-func (p *TaskPanel) renameCurrentTask(task *model.Task, newTitle string) {
+func (p *TaskView) renameCurrentTask(task *model.Task, newTitle string) {
 	repo := global.TaskRepo
 
 	if !validateTaskName(newTitle) {
@@ -400,16 +400,16 @@ func (p *TaskPanel) renameCurrentTask(task *model.Task, newTitle string) {
 
 	if repo.IsTaskExist(newTitle) {
 		msg := fmt.Sprintf("[red]Task title: %v is already exist", newTitle)
-		statusPanel.showForSeconds(msg, 5)
+		statusView.showForSeconds(msg, 5)
 	} else {
 		originalTitle := task.Title
 		task.Title = newTitle
 		if err := repo.Update(task); err != nil {
 			msg := fmt.Sprintf("[red]Update task title: %v failed, error: %v", newTitle, err.Error())
-			statusPanel.showForSeconds(msg, 5)
+			statusView.showForSeconds(msg, 5)
 		} else {
 			msg := fmt.Sprintf("[green]Update task title[%s] -> %s successful", originalTitle, newTitle)
-			statusPanel.showForSeconds(msg, 5)
+			statusView.showForSeconds(msg, 5)
 			// reload
 			p.reloadTasks()
 		}
@@ -417,35 +417,35 @@ func (p *TaskPanel) renameCurrentTask(task *model.Task, newTitle string) {
 }
 
 // Delete current focused task
-func (p *TaskPanel) deleteCurrentTask() {
+func (p *TaskView) deleteCurrentTask() {
 	task := p.getFocusTask()
 	if err := global.TaskRepo.Delete(task); err != nil {
 		msg := fmt.Sprintf("[red]Delete task: %v failed, error: %v", task.Title, err.Error())
-		statusPanel.showForSeconds(msg, 5)
+		statusView.showForSeconds(msg, 5)
 	} else {
 		msg := fmt.Sprintf("[green]Delete task: %v successful", task.Title)
-		statusPanel.showForSeconds(msg, 5)
+		statusView.showForSeconds(msg, 5)
 		// reload
 		p.reloadTasks()
-		// update Today panel
-		todayPanel.updateTodoCount()
+		// update Today view
+		todayView.updateTodoCount()
 	}
 }
 
 // Restore current focused task
 // For deleted task
-func (p *TaskPanel) restoreCurrentTask() {
+func (p *TaskView) restoreCurrentTask() {
 	task := p.getFocusTask()
 	if err := global.TaskRepo.UpdateField(task, "IsDeleted", false); err != nil {
 		msg := fmt.Sprintf("[red]Restore task: %v failed, error: %v", task.Title, err.Error())
-		statusPanel.showForSeconds(msg, 5)
+		statusView.showForSeconds(msg, 5)
 	} else {
 		msg := fmt.Sprintf("[green]Restore task: %v successful", task.Title)
-		statusPanel.showForSeconds(msg, 5)
+		statusView.showForSeconds(msg, 5)
 		// reload
 		p.reloadTasks()
-		// update Today panel
-		todayPanel.updateTodoCount()
+		// update Today view
+		todayView.updateTodoCount()
 	}
 }
 
