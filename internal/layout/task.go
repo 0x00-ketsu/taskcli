@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/0x00-ketsu/taskcli/internal/global"
 	"github.com/0x00-ketsu/taskcli/internal/model"
 	"github.com/asdine/storm/v3"
 	"github.com/gdamore/tcell/v2"
@@ -30,8 +29,6 @@ type TaskView struct {
 }
 
 func NewTaskView() *TaskView {
-	app := global.App
-
 	view := TaskView{
 		Flex:    tview.NewFlex().SetDirection(tview.FlexRow),
 		list:    tview.NewList().ShowSecondaryText(false),
@@ -52,8 +49,6 @@ func NewTaskView() *TaskView {
 
 	// Create new task
 	view.newTask.SetDoneFunc(func(key tcell.Key) {
-		repo := global.TaskRepo
-
 		switch key {
 		case tcell.KeyEnter:
 			name := view.newTask.GetText()
@@ -62,7 +57,7 @@ func NewTaskView() *TaskView {
 			}
 
 			// Save new task to db & update Tasks
-			_, err := repo.Create(name, "")
+			_, err := taskRepo.Create(name, "")
 			if err != nil {
 				msg := fmt.Sprintf("[red]Create task failed, error: %v", err.Error())
 				statusView.showForSeconds(msg, 5)
@@ -99,8 +94,6 @@ func (p *TaskView) reloadTasks() {
 // Loads tasks based on selected item in Filter view
 // choices: today, tomorrow, last 7 days
 func (p *TaskView) loadFilterTasks(filter string) {
-	app := global.App
-
 	p.clearTaskList()
 	p.RemoveItem(p.hint)
 	p.filter = filter
@@ -127,27 +120,25 @@ func (p *TaskView) getFiterTasks(filter string) ([]model.Task, error) {
 	var tasks []model.Task
 	var err error
 
-	repo := global.TaskRepo
-
 	switch filter {
 	case "today":
-		tasks, err = repo.GetAllByDate(today)
+		tasks, err = taskRepo.GetAllByDate(today)
 
 	case "tomorrow":
-		tasks, err = repo.GetAllByDate(tomorrow)
+		tasks, err = taskRepo.GetAllByDate(tomorrow)
 
 	case "last 7 days":
 		week := today.Add(time.Hour * 7 * 24)
-		tasks, err = repo.GetAllByDateRange(today, week)
+		tasks, err = taskRepo.GetAllByDateRange(today, week)
 
 	case "completed":
-		tasks, err = repo.GetAllCompleted()
+		tasks, err = taskRepo.GetAllCompleted()
 
 	case "expired":
-		tasks, err = repo.GetAllExpired()
+		tasks, err = taskRepo.GetAllExpired()
 
 	case "trash":
-		tasks, err = repo.GetAllDeleted()
+		tasks, err = taskRepo.GetAllDeleted()
 	}
 
 	return tasks, err
@@ -320,8 +311,6 @@ func (p *TaskView) clearTaskList() {
 
 // Marks a task is actived & loads detail in Task Detail view
 func (p *TaskView) activateTask(task model.Task) {
-	app := global.App
-
 	removeTaskDetailView()
 
 	focusTask := p.getFocusTask()
@@ -379,9 +368,8 @@ func (p *TaskView) getFocusTask() *model.Task {
 
 // Toggle task status (completed / uncompleted)
 func (p *TaskView) toggleTaskStatus(task *model.Task) {
-	repo := global.TaskRepo
 	status := !task.IsCompleted
-	if repo.UpdateField(task, "IsCompleted", status) == nil {
+	if taskRepo.UpdateField(task, "IsCompleted", status) == nil {
 		task.IsCompleted = status
 		// reload
 		p.reloadTasks()
@@ -392,19 +380,17 @@ func (p *TaskView) toggleTaskStatus(task *model.Task) {
 
 // Rename current focused task title
 func (p *TaskView) renameCurrentTask(task *model.Task, newTitle string) {
-	repo := global.TaskRepo
-
 	if !validateTaskName(newTitle) {
 		return
 	}
 
-	if repo.IsTaskExist(newTitle) {
+	if taskRepo.IsTaskExist(newTitle) {
 		msg := fmt.Sprintf("[red]Task title: %v is already exist", newTitle)
 		statusView.showForSeconds(msg, 5)
 	} else {
 		originalTitle := task.Title
 		task.Title = newTitle
-		if err := repo.Update(task); err != nil {
+		if err := taskRepo.Update(task); err != nil {
 			msg := fmt.Sprintf("[red]Update task title: %v failed, error: %v", newTitle, err.Error())
 			statusView.showForSeconds(msg, 5)
 		} else {
@@ -419,7 +405,7 @@ func (p *TaskView) renameCurrentTask(task *model.Task, newTitle string) {
 // Delete current focused task
 func (p *TaskView) deleteCurrentTask() {
 	task := p.getFocusTask()
-	if err := global.TaskRepo.Delete(task); err != nil {
+	if err := taskRepo.Delete(task); err != nil {
 		msg := fmt.Sprintf("[red]Delete task: %v failed, error: %v", task.Title, err.Error())
 		statusView.showForSeconds(msg, 5)
 	} else {
@@ -436,7 +422,7 @@ func (p *TaskView) deleteCurrentTask() {
 // For deleted task
 func (p *TaskView) restoreCurrentTask() {
 	task := p.getFocusTask()
-	if err := global.TaskRepo.UpdateField(task, "IsDeleted", false); err != nil {
+	if err := taskRepo.UpdateField(task, "IsDeleted", false); err != nil {
 		msg := fmt.Sprintf("[red]Restore task: %v failed, error: %v", task.Title, err.Error())
 		statusView.showForSeconds(msg, 5)
 	} else {

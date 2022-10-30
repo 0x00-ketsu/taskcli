@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/0x00-ketsu/taskcli/internal/cmd/flags"
-	"github.com/0x00-ketsu/taskcli/internal/global"
 	"github.com/0x00-ketsu/taskcli/internal/model"
 	"github.com/0x00-ketsu/taskcli/internal/utils"
 	"github.com/atotto/clipboard"
@@ -103,7 +102,6 @@ func (p *TaskDetailView) activateEditor() {
 	p.contentView.SetBorderColor(tcell.ColorDarkOrange)
 	p.contentHint.SetText(" Esc to save changes")
 
-	app := global.App
 	app.SetFocus(p.contentView)
 }
 
@@ -112,7 +110,6 @@ func (p *TaskDetailView) deactivateEditor() {
 	p.contentView.SetBorderColor(tcell.ColorLightSlateGray)
 	p.contentHint.SetText(" i = insert, c = copy, h/j/k/l = move cursor, v = external editor")
 
-	app := global.App
 	app.SetFocus(p)
 }
 
@@ -124,7 +121,6 @@ func (p *TaskDetailView) editInExternalEditor() {
 	}
 
 	var messageToShow, updatedContent string
-	app := global.App
 	app.Suspend(func() {
 		editor := flags.Editor
 		cmd := exec.Command(editor, tmpFileName)
@@ -184,10 +180,8 @@ func (p *TaskDetailView) loadEditor() {
 }
 
 func (p *TaskDetailView) updateTaskContent(content string) {
-	repo := global.TaskRepo
-
 	p.task.Content = content
-	if err := repo.UpdateField(p.task, "Content", content); err != nil {
+	if err := taskRepo.UpdateField(p.task, "Content", content); err != nil {
 		msg := fmt.Sprintf("[red]Save content failed, error: %v", err.Error())
 		statusView.showForSeconds(msg, 5)
 	} else {
@@ -196,7 +190,6 @@ func (p *TaskDetailView) updateTaskContent(content string) {
 }
 
 func (p *TaskDetailView) makeDateRow() *tview.Flex {
-	app := global.App
 	p.taskDueDate = makeLightTextInput("YYYY-mm-dd").
 		SetLabel("Set: ").
 		SetLabelColor(tcell.ColorWhite).
@@ -237,8 +230,7 @@ func (p *TaskDetailView) makeDateRow() *tview.Flex {
 // Update task date if `update` is true
 func (p *TaskDetailView) setTaskDate(date time.Time, update bool) {
 	if update {
-		repo := global.TaskRepo
-		if err := repo.UpdateField(p.task, "DueDate", date); err != nil {
+		if err := taskRepo.UpdateField(p.task, "DueDate", date); err != nil {
 			msg := fmt.Sprintf("[red]Update task due date failed, error: %v", err.Error())
 			statusView.showForSeconds(msg, 5)
 			return
@@ -303,7 +295,6 @@ func (p *TaskDetailView) copyTaskContent() {
 	content.WriteString(p.task.Content)
 	_ = clipboard.WriteAll(content.String())
 
-	app := global.App
 	app.SetFocus(p)
 	statusView.showForSeconds("[green]Task content copyed. Try Pasting anywhere", 5)
 }

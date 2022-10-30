@@ -13,7 +13,7 @@ type StatusView struct {
 	hint      *tview.TextView
 }
 
-func NewStatusView(app *tview.Application) *StatusView {
+func NewStatusView() *StatusView {
 	view := &StatusView{
 		Flex:      tview.NewFlex(),
 		container: app,

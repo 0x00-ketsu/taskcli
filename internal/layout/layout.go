@@ -3,13 +3,21 @@ package layout
 import (
 	"time"
 
-	"github.com/0x00-ketsu/taskcli/internal/global"
+	"github.com/0x00-ketsu/taskcli/internal/cmd/flags"
+	"github.com/0x00-ketsu/taskcli/internal/database"
+	"github.com/0x00-ketsu/taskcli/internal/repository"
+	"github.com/0x00-ketsu/taskcli/internal/repository/bolt"
 	"github.com/0x00-ketsu/taskcli/internal/utils"
+	"github.com/asdine/storm/v3"
 	"github.com/rivo/tview"
 )
 
 // Declare all views
 var (
+	db *storm.DB
+	taskRepo repository.Task
+
+	app          *tview.Application
 	layout, main *tview.Flex
 
 	todayView      *TodayView
@@ -28,7 +36,13 @@ var (
 	tomorrow = today.AddDate(0, 0, 1)
 )
 
-func Load() *tview.Flex {
+func Load(application *tview.Application) *tview.Flex {
+	// Connect DB
+	db = database.Connect(flags.Storage)
+	taskRepo = bolt.NewTask(db)
+
+	app = application
+
 	// GUI views
 	todayView = NewTodayView()
 	filterView = NewFilterView()
@@ -36,7 +50,7 @@ func Load() *tview.Flex {
 	taskView = NewTaskView()
 	taskDetailView = NewTaskDetailView()
 	menuView = NewMenuView()
-	statusView = NewStatusView(global.App)
+	statusView = NewStatusView()
 	helpView = NewHelpView()
 
 	// GUI main

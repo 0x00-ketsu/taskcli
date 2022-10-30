@@ -2,10 +2,7 @@ package cmd
 
 import (
 	"github.com/0x00-ketsu/taskcli/internal/cmd/flags"
-	"github.com/0x00-ketsu/taskcli/internal/database"
-	"github.com/0x00-ketsu/taskcli/internal/global"
 	"github.com/0x00-ketsu/taskcli/internal/layout"
-	"github.com/0x00-ketsu/taskcli/internal/repository/bolt"
 	"github.com/rivo/tview"
 	"github.com/spf13/cobra"
 )
@@ -15,27 +12,22 @@ var rootCmd = &cobra.Command{
 	Use:   "taskcli",
 	Short: "A terminal UI for manage tasks",
 	Run: func(cmd *cobra.Command, args []string) {
-		// Create app
-		app := tview.NewApplication()
 
-		// Initial global variables
-		global.App = app
-
-		// Connect DB
-		db := database.Connect(flags.Storage)
-		defer func() {
-			if err := db.Close(); err != nil {
-				panic(err)
-			}
-		}()
-
-		// Task repository
-		taskRepo := bolt.NewTask(db)
-		global.TaskRepo = taskRepo
+		// // Connect DB
+		// db := database.Connect(flags.Storage)
+		// defer func() {
+		// 	if err := db.Close(); err != nil {
+		// 		panic(err)
+		// 	}
+		// }()
+		//
+		// // Task repository
+		// taskRepo := bolt.NewTask(db)
+		// global.TaskRepo = taskRepo
 
 		// Load layout
-		layout := layout.Load()
-		global.Layout = layout
+		app := tview.NewApplication()
+		layout := layout.Load(app)
 
 		if err := app.SetRoot(layout, true).Run(); err != nil {
 			panic(err)

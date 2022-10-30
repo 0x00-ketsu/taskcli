@@ -1,7 +1,6 @@
 package layout
 
 import (
-	"github.com/0x00-ketsu/taskcli/internal/global"
 	"github.com/rivo/tview"
 )
 
@@ -44,7 +43,7 @@ func (p *SearchView) search() {
 	taskView.clearTaskList()
 	taskView.RemoveItem(taskView.hint)
 
-	tasks, err := global.TaskRepo.Search(titleVal, isCompletedFlag, isDeletedFlag)
+	tasks, err := taskRepo.Search(titleVal, isCompletedFlag, isDeletedFlag)
 	if err != nil {
 		statusView.showForSeconds("[red]Search failed, error: "+err.Error(), 5)
 		return
@@ -54,7 +53,6 @@ func (p *SearchView) search() {
 		taskView.renderTaskList(tasks)
 		statusView.showForSeconds("[yellow]Displaying tasks of search", 3)
 
-		app := global.App
 		app.SetFocus(taskView)
 		removeTaskDetailView()
 	}
@@ -65,7 +63,6 @@ func (p *SearchView) reset() {
 	p.form.Clear(true)
 	p.init()
 
-	app := global.App
 	app.SetFocus(p)
 }
 

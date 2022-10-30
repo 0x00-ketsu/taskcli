@@ -3,14 +3,12 @@ package layout
 import (
 	"reflect"
 
-	"github.com/0x00-ketsu/taskcli/internal/global"
 	"github.com/0x00-ketsu/taskcli/internal/utils"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
 
 func setKeyboardShortcuts() *tview.Application {
-	app := global.App
 	return app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		if ignoreKeyEvent(app) {
 			return event
@@ -18,6 +16,7 @@ func setKeyboardShortcuts() *tview.Application {
 
 		switch event.Rune() {
 		case 'q':
+			db.Close()
 			app.Stop()
 			return nil
 		case '/':

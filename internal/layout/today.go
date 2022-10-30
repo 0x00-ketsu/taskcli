@@ -3,7 +3,6 @@ package layout
 import (
 	"fmt"
 
-	"github.com/0x00-ketsu/taskcli/internal/global"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
@@ -34,7 +33,7 @@ func (p *TodayView) updateTodoCount() {
 
 func renderHint() string {
 	var hint string
-	todayTodoCount := global.TaskRepo.GetTodayTodoCount()
+	todayTodoCount := taskRepo.GetTodayTodoCount()
 	if todayTodoCount == 0 {
 		hint = " have a nice day"
 	} else {

@@ -3,7 +3,6 @@ package layout
 import (
 	"fmt"
 
-	"github.com/0x00-ketsu/taskcli/internal/global"
 	"github.com/0x00-ketsu/taskcli/internal/model"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
@@ -70,6 +69,5 @@ func (p *TaskDetailHeader) showRename() {
 	p.pages.SwitchToPage("rename")
 	p.renameInput.SetText(p.task.Title)
 
-	app := global.App
 	app.SetFocus(p)
 }

@@ -1,7 +1,6 @@
 package layout
 
 import (
-	"github.com/0x00-ketsu/taskcli/internal/global"
 	"github.com/0x00-ketsu/taskcli/internal/model"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
@@ -71,7 +70,6 @@ var commonTaskMenus = []menuItem{
 						removeTaskDetailView()
 						closeMenuView()
 						return
-						// }
 					case tcell.KeyEsc:
 						menuView.Pages.SwitchToPage(MENU_PAGE)
 					}
@@ -143,7 +141,6 @@ func (p *MenuView) open() {
 	focusTask := taskView.getFocusTask()
 	p.loadMenus(*focusTask)
 
-	app := global.App
 	curItemIndex := taskView.list.GetCurrentItem()
 	curItemText, _ := taskView.list.GetItemText(curItemIndex)
 	if curItemText != TODO_HEADER && curItemText != COMPLETED_HEADER && curItemText != "" {
@@ -177,12 +174,11 @@ func (p *MenuView) loadMenus(task model.Task) {
 
 // Close Menu view and focus Task view
 func closeMenuView() {
-	app := global.App
 	layout.RemoveItem(menuView)
 	app.SetFocus(taskView)
 }
 
-// Returns the size of MenuPanel rows
+// Returns the size of MenuView rows
 func (p *MenuView) getSize() int {
 	return p.choice.items.GetItemCount() + 4
 }
