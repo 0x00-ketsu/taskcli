@@ -30,7 +30,7 @@ func setKeyboardShortcuts() *tview.Application {
 
 		switch {
 		case filterView.HasFocus():
-			event = handleFilterViewShortcuts(app, event)
+			event = handleFilterViewShortcuts(event)
 
 		case searchView.HasFocus():
 			event = handleSearchViewShortcuts(app, event)
@@ -53,11 +53,10 @@ func setKeyboardShortcuts() *tview.Application {
 }
 
 // Shortcuts for Filter view
-func handleFilterViewShortcuts(app *tview.Application, event *tcell.EventKey) *tcell.EventKey {
+func handleFilterViewShortcuts(event *tcell.EventKey) *tcell.EventKey {
 	this := filterView
 
-	switch event.Key() {
-	case tcell.KeyRune:
+	if event.Key() == tcell.KeyRune {
 		switch event.Rune() {
 		case 'j':
 			this.lineDown()
@@ -79,9 +78,7 @@ func handleFilterViewShortcuts(app *tview.Application, event *tcell.EventKey) *t
 
 // Shortcuts for Search view
 func handleSearchViewShortcuts(app *tview.Application, event *tcell.EventKey) *tcell.EventKey {
-	// this := searchView
-	switch event.Key() {
-	case tcell.KeyEsc:
+	if event.Key() == tcell.KeyEsc {
 		app.SetFocus(filterView)
 		return nil
 	}
@@ -231,9 +228,8 @@ func handleHelpViewShortcuts(app *tview.Application, event *tcell.EventKey) *tce
 			AddItem(main, 0, 1, true).
 			AddItem(statusView, 1, 1, false)
 		app.SetFocus(main)
-		return event
+		return nil
 	}
-
 }
 
 func ignoreKeyEvent(app *tview.Application) bool {
