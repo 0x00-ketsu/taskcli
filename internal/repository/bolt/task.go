@@ -32,9 +32,9 @@ func (t *TaskBolt) GetTodayTodoCount() int {
 		Find(&tasks)
 	if err != nil {
 		return 0
-	} else {
-		return len(tasks)
 	}
+
+	return len(tasks)
 }
 
 // Search returns match tasks with search fields
@@ -49,15 +49,15 @@ func (t TaskBolt) Search(title string, isCompleted, isDeleted bool) ([]model.Tas
 		Find(&tasks)
 	if err != nil {
 		return tasks, err
-	} else {
-		var filteredTasks []model.Task
-		for _, task := range tasks {
-			if strings.Contains(task.Title, title) {
-				filteredTasks = append(filteredTasks, task)
-			}
-		}
-		return filteredTasks, nil
 	}
+
+	var filteredTasks []model.Task
+	for _, task := range tasks {
+		if strings.Contains(task.Title, title) {
+			filteredTasks = append(filteredTasks, task)
+		}
+	}
+	return filteredTasks, nil
 }
 
 // GetByID returns a task with ID
@@ -136,7 +136,6 @@ func (t *TaskBolt) Create(title, content string) (*model.Task, error) {
 	if t.IsTaskExist(title) {
 		msg := fmt.Sprintf("task title: %v is alreay exist", title)
 		return nil, errors.New(msg)
-
 	}
 
 	// Create
@@ -180,9 +179,9 @@ func (t *TaskBolt) IsTaskExist(title string) bool {
 
 	if err == nil && len(tasks) > 0 {
 		return true
-	} else {
-		return false
 	}
+
+	return false
 }
 
 func (t *TaskBolt) getOneByField(fieldName string, value interface{}) (model.Task, error) {

@@ -150,7 +150,6 @@ func (p *MenuView) open() {
 			AddItem(statusView, 1, 1, false)
 		app.SetFocus(p)
 	}
-
 }
 
 func (p *MenuView) loadMenus(task model.Task) {

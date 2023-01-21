@@ -47,15 +47,15 @@ func (p *SearchView) search() {
 	if err != nil {
 		statusView.showForSeconds("[red]Search failed, error: "+err.Error(), 5)
 		return
-	} else {
-		taskView.filter = "search"
-		taskView.RemoveItem(taskView.hint)
-		taskView.renderTaskList(tasks)
-		statusView.showForSeconds("[yellow]Displaying tasks of search", 3)
-
-		app.SetFocus(taskView)
-		removeTaskDetailView()
 	}
+
+	taskView.filter = "search"
+	taskView.RemoveItem(taskView.hint)
+	taskView.renderTaskList(tasks)
+	statusView.showForSeconds("[yellow]Displaying tasks of search", 3)
+
+	app.SetFocus(taskView)
+	removeTaskDetailView()
 }
 
 // Reset form

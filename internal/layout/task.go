@@ -209,7 +209,7 @@ func (p *TaskView) classifyTasks(tasks []model.Task) {
 				text = renderTaskTitle(task)
 			}
 			p.list.AddItem(text, "", 0, func() func() {
-				return func() { p.activateTask(task) }
+				return func() { p.activateTask() }
 			}())
 		}
 
@@ -237,7 +237,7 @@ func (p *TaskView) classifyTasks(tasks []model.Task) {
 				text = renderTaskTitle(task)
 			}
 			p.list.AddItem(text, "", 0, func() func() {
-				return func() { p.activateTask(task) }
+				return func() { p.activateTask() }
 			}())
 		}
 	}
@@ -257,7 +257,7 @@ func (p *TaskView) classifyTasks(tasks []model.Task) {
 				text = renderTaskTitle(task)
 			}
 			p.list.AddItem(text, "", 0, func() func() {
-				return func() { p.activateTask(task) }
+				return func() { p.activateTask() }
 			}())
 		}
 	}
@@ -277,7 +277,7 @@ func (p *TaskView) classifyTasks(tasks []model.Task) {
 				text = renderTaskTitle(task)
 			}
 			p.list.AddItem(text, "", 0, func() func() {
-				return func() { p.activateTask(task) }
+				return func() { p.activateTask() }
 			}())
 		}
 	}
@@ -292,7 +292,7 @@ func (p *TaskView) unclassifyTasks(tasks []model.Task) {
 		dueDate := task.DueDate.Format("2006-01-02")
 		text := fmt.Sprintf("%v    [lime::i]-- Due: %v", renderTaskTitle(task), dueDate)
 		p.list.AddItem(text, "", 0, func() func() {
-			return func() { p.activateTask(task) }
+			return func() { p.activateTask() }
 		}())
 	}
 }
@@ -310,7 +310,7 @@ func (p *TaskView) clearTaskList() {
 }
 
 // Marks a task is actived & loads detail in Task Detail view
-func (p *TaskView) activateTask(task model.Task) {
+func (p *TaskView) activateTask() {
 	removeTaskDetailView()
 
 	focusTask := p.getFocusTask()
@@ -338,7 +338,7 @@ func (p *TaskView) lineDown() {
 		nextItemIndex := curItemIndex + 1
 		nextItemText, _ := p.list.GetItemText(nextItemIndex)
 		if nextItemText == "" {
-			nextItemIndex += 1
+			nextItemIndex++
 		}
 		p.list.SetCurrentItem(nextItemIndex)
 	}
@@ -354,7 +354,7 @@ func (p *TaskView) lineUp() {
 		prevItemIndex := curItemIndex - 1
 		prevItemText, _ := p.list.GetItemText(prevItemIndex)
 		if prevItemText == "" {
-			prevItemIndex -= 1
+			prevItemIndex--
 		}
 		p.list.SetCurrentItem(prevItemIndex)
 	}

@@ -12,7 +12,6 @@ var rootCmd = &cobra.Command{
 	Use:   "taskcli",
 	Short: "A terminal UI for manage tasks",
 	Run: func(cmd *cobra.Command, args []string) {
-
 		// // Connect DB
 		// db := database.Connect(flags.Storage)
 		// defer func() {

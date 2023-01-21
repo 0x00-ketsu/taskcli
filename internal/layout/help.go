@@ -31,8 +31,7 @@ func NewHelpView() *HelpView {
 
 // drawBanner ...
 func drawBanner() *tview.Flex {
-	text :=
-		`
+	text := `
     ____________________
     < Welcome to Taskcli >
     --------------------

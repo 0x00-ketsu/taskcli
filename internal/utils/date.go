@@ -6,11 +6,12 @@ import (
 
 // ParseStrToDate converts string to time.Time with specific format
 func ParseStrToDate(input string, format string) (time.Time, error) {
-	if datetime, err := time.Parse(format, input); err != nil {
+	datetime, err := time.Parse(format, input)
+	if err != nil {
 		return time.Time{}, err
-	} else {
-		return ToDate(datetime), nil
 	}
+
+	return ToDate(datetime), nil
 }
 
 // ToDate converts datetime to date format, which sets hour, min, sec to zero

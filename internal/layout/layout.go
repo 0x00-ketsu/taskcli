@@ -14,7 +14,7 @@ import (
 
 // Declare all views
 var (
-	db *storm.DB
+	db       *storm.DB
 	taskRepo repository.Task
 
 	app          *tview.Application

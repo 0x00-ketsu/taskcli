@@ -46,7 +46,7 @@ func (p *FilterView) lineDown() {
 		nextItemIndex := curItemIndex + 1
 		nextItemText, _ := p.list.GetItemText(nextItemIndex)
 		if nextItemText == SEP || nextItemText == "" {
-			nextItemIndex += 1
+			nextItemIndex++
 		}
 		p.list.SetCurrentItem(nextItemIndex)
 	}
@@ -62,7 +62,7 @@ func (p *FilterView) lineUp() {
 		prevItemIndex := curItemIndex - 1
 		prevItemText, _ := p.list.GetItemText(prevItemIndex)
 		if prevItemText == SEP || prevItemText == "" {
-			prevItemIndex -= 1
+			prevItemIndex--
 		}
 		p.list.SetCurrentItem(prevItemIndex)
 	}

@@ -169,8 +169,7 @@ func (p *TaskDetailView) loadEditor() {
 	p.contentView.SetBorderColor(tcell.ColorLightSlateGray)
 
 	p.contentView.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
-		switch event.Key() {
-		case tcell.KeyEsc:
+		if event.Key() == tcell.KeyEsc {
 			p.updateTaskContent(p.contentView.Buf.String())
 			p.deactivateEditor()
 			return nil
