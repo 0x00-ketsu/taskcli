@@ -47,7 +47,6 @@ func setKeyboardShortcuts() *tview.Application {
 		case helpView.HasFocus():
 			event = handleHelpViewShortcuts(app, event)
 		}
-
 		return event
 	})
 }
@@ -55,7 +54,6 @@ func setKeyboardShortcuts() *tview.Application {
 // Shortcuts for Filter view
 func handleFilterViewShortcuts(event *tcell.EventKey) *tcell.EventKey {
 	this := filterView
-
 	if event.Key() == tcell.KeyRune {
 		switch event.Rune() {
 		case 'j':
@@ -72,7 +70,6 @@ func handleFilterViewShortcuts(event *tcell.EventKey) *tcell.EventKey {
 			return nil
 		}
 	}
-
 	return event
 }
 
@@ -82,14 +79,12 @@ func handleSearchViewShortcuts(app *tview.Application, event *tcell.EventKey) *t
 		app.SetFocus(filterView)
 		return nil
 	}
-
 	return event
 }
 
 // Shortcuts for Task view
 func handleTaskViewShortcuts(app *tview.Application, event *tcell.EventKey) *tcell.EventKey {
 	this := taskView
-
 	switch event.Key() {
 	case tcell.KeyEsc:
 		app.SetFocus(filterView)
@@ -116,13 +111,11 @@ func handleTaskViewShortcuts(app *tview.Application, event *tcell.EventKey) *tce
 			return nil
 		}
 	}
-
 	return event
 }
 
 func handleTaskDetailViewShortcuts(app *tview.Application, event *tcell.EventKey) *tcell.EventKey {
 	this := taskDetailView
-
 	switch event.Key() {
 	case tcell.KeyEsc:
 		removeTaskDetailView()
@@ -174,7 +167,6 @@ func handleTaskDetailViewShortcuts(app *tview.Application, event *tcell.EventKey
 			return nil
 		}
 	}
-
 	return event
 }
 
@@ -185,7 +177,6 @@ func handleMenuViewShortcuts(event *tcell.EventKey) *tcell.EventKey {
 	currentItemIndex := this.choice.items.GetCurrentItem()
 	prevItemIndex := currentItemIndex - 1
 	nextItemIndex := currentItemIndex + 1
-
 	switch event.Key() {
 	case tcell.KeyEsc:
 		closeMenuView()
@@ -210,7 +201,6 @@ func handleMenuViewShortcuts(event *tcell.EventKey) *tcell.EventKey {
 			return nil
 		}
 	}
-
 	return event
 }
 
@@ -234,6 +224,5 @@ func handleHelpViewShortcuts(app *tview.Application, event *tcell.EventKey) *tce
 
 func ignoreKeyEvent(app *tview.Application) bool {
 	textInputs := []string{"*tview.InputField", "*femto.View"}
-
 	return utils.InArray(reflect.TypeOf(app.GetFocus()).String(), textInputs)
 }

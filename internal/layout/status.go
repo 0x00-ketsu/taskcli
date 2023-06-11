@@ -19,10 +19,8 @@ func NewStatusView() *StatusView {
 		container: app,
 		hint:      tview.NewTextView().SetDynamicColors(true),
 	}
-
 	view.setDefaultHint()
 	view.AddItem(view.hint, 0, 1, false)
-
 	return view
 }
 
@@ -53,12 +51,10 @@ func (p *StatusView) showForSeconds(message string, timeout int) {
 
 	go func() {
 		time.Sleep(time.Second * time.Duration(timeout))
-
 		// Apply restore only if this is the last pending restore
 		if restorInQ == 1 {
 			p.restore()
 		}
-
 		restorInQ--
 	}()
 }

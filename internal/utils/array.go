@@ -10,7 +10,6 @@ func RemoveEmptyString(s []string) []string {
 			target = append(target, str)
 		}
 	}
-
 	return target
 }
 
@@ -22,18 +21,14 @@ func InArray(val interface{}, array interface{}) bool {
 // AtArrayPosition finds the position(int) of val in an Array(Slice)
 func AtArrayPosition(val interface{}, array interface{}) (index int) {
 	index = -1
-
 	if reflect.TypeOf(array).Kind() == reflect.Slice {
 		s := reflect.ValueOf(array)
-
 		for i := 0; i < s.Len(); i++ {
 			if reflect.DeepEqual(val, s.Index(i).Interface()) == true {
 				index = i
-
 				return
 			}
 		}
 	}
-
 	return
 }

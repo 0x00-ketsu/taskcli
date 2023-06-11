@@ -17,12 +17,10 @@ func NewTodayView() *TodayView {
 		Flex: tview.NewFlex(),
 		hint: tview.NewTextView().SetTextColor(tcell.ColorGreen),
 	}
-
 	hint := renderHint()
 	view.hint.SetText(hint)
 	view.AddItem(view.hint, 0, 1, false)
 	view.SetBorder(true).SetTitle("Today").SetTitleAlign(tview.AlignLeft)
-
 	return &view
 }
 
@@ -39,6 +37,5 @@ func renderHint() string {
 	} else {
 		hint = fmt.Sprintf(" todo items: %d", todayTodoCount)
 	}
-
 	return hint
 }

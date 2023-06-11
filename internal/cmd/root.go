@@ -12,22 +12,9 @@ var rootCmd = &cobra.Command{
 	Use:   "taskcli",
 	Short: "A terminal UI for manage tasks",
 	Run: func(cmd *cobra.Command, args []string) {
-		// // Connect DB
-		// db := database.Connect(flags.Storage)
-		// defer func() {
-		// 	if err := db.Close(); err != nil {
-		// 		panic(err)
-		// 	}
-		// }()
-		//
-		// // Task repository
-		// taskRepo := bolt.NewTask(db)
-		// global.TaskRepo = taskRepo
-
 		// Load layout
 		app := tview.NewApplication()
 		layout := layout.Load(app)
-
 		if err := app.SetRoot(layout, true).Run(); err != nil {
 			panic(err)
 		}

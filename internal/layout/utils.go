@@ -12,9 +12,7 @@ func removeTaskDetailView() {
 	main.RemoveItem(taskDetailView)
 }
 
-func getTaskTitleColor(task model.Task) string {
-	var color string
-
+func getTaskTitleColor(task model.Task) (color string) {
 	switch {
 	case task.IsCompleted:
 		color = "gray"
@@ -25,8 +23,7 @@ func getTaskTitleColor(task model.Task) string {
 	default:
 		color = "white"
 	}
-
-	return color
+	return
 }
 
 func makeLightTextInput(placeholder string) *tview.InputField {
@@ -48,15 +45,13 @@ func makeHorizontalLine(lineChar rune, color tcell.Color) *tview.TextView {
 
 		return x + 1, centerY + 1, width - 2, height - (centerY + 1 - y)
 	})
-
 	return hr
 }
 
 func makeButton(label string, handler func()) *tview.Button {
-	btn := tview.NewButton(label).SetSelectedFunc(handler).
+	btn := tview.NewButton(label).
+		SetSelectedFunc(handler).
 		SetLabelColor(tcell.ColorWhite)
-
 	btn.SetBackgroundColor(tcell.ColorCornflowerBlue)
-
 	return btn
 }

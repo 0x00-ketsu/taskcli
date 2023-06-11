@@ -24,20 +24,16 @@ func NewTaskDetailHeader() *TaskDetailHeader {
 		renameInput: makeLightTextInput("Task title"),
 		taskName:    tview.NewTextView().SetDynamicColors(true),
 	}
-
 	header.pages.AddPage("title", header.taskName, true, true)
 	header.pages.AddPage("rename", header.renameInput, true, false)
 	header.bindRenameEvent()
-
-	tips := tview.NewFlex().
-		AddItem(tview.NewTextView().SetTextColor(tcell.ColorDimGray).SetText("r = Rename task title"), 0, 1, false)
-
+	renameView := tview.NewTextView().SetTextColor(tcell.ColorDimGray).SetText("r = Rename task title")
+	tips := tview.NewFlex().AddItem(renameView, 0, 1, false)
 	header.
 		AddItem(header.pages, 1, 1, true).
 		AddItem(blankCell, 1, 1, false).
 		AddItem(tips, 1, 1, false).
 		AddItem(makeHorizontalLine(tcell.RuneS3, tcell.ColorGray), 1, 1, false)
-
 	return &header
 }
 

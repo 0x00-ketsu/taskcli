@@ -14,7 +14,6 @@ func CreateFileIfNotExist(filePath string) error {
 			return err
 		}
 	}
-
 	return err
 }
 
@@ -24,11 +23,10 @@ func WriteToTempFile(content string, tempFilePattern string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	fileName := tmpFile.Name()
 
-	if err = ioutil.WriteFile(fileName, []byte(content), 0777); err != nil {
+	fileName := tmpFile.Name()
+	if err = os.WriteFile(fileName, []byte(content), 0777); err != nil {
 		return "", err
 	}
-
 	return fileName, tmpFile.Close()
 }

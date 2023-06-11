@@ -87,7 +87,6 @@ func NewTaskDetailView() *TaskDetailView {
 // Loads and shows task detail
 func (p *TaskDetailView) setTask(task *model.Task) {
 	p.task = task
-
 	p.header.setTitle(task)
 	p.contentView.Buf = makeBufferFromString(p.task.Content)
 	p.contentView.SetColorscheme(p.colorScheme)
@@ -101,7 +100,6 @@ func (p *TaskDetailView) activateEditor() {
 	p.contentView.Readonly = false
 	p.contentView.SetBorderColor(tcell.ColorDarkOrange)
 	p.contentHint.SetText(" Esc to save changes")
-
 	app.SetFocus(p.contentView)
 }
 
@@ -109,7 +107,6 @@ func (p *TaskDetailView) deactivateEditor() {
 	p.contentView.Readonly = true
 	p.contentView.SetBorderColor(tcell.ColorLightSlateGray)
 	p.contentHint.SetText(" i = insert, c = copy, h/j/k/l = move cursor, v = external editor")
-
 	app.SetFocus(p)
 }
 
@@ -138,18 +135,14 @@ func (p *TaskDetailView) editInExternalEditor() {
 			messageToShow = "[red]Failed to load external editing. Try in-app editing by pressing i"
 		}
 	})
-
 	if messageToShow != "" {
 		statusView.showForSeconds(messageToShow, 10)
 	}
-
 	if updatedContent != "" {
 		p.updateTaskContent(updatedContent)
 		p.setTask(p.task)
 	}
-
 	app.EnableMouse(true)
-
 	_ = os.Remove(tmpFileName)
 }
 
@@ -157,17 +150,14 @@ func (p *TaskDetailView) editInExternalEditor() {
 func (p *TaskDetailView) loadEditor() {
 	p.contentView = femto.NewView(makeBufferFromString(""))
 	p.contentView.SetRuntimeFiles(runtime.Files)
-
 	if monokai := runtime.Files.FindFile(femto.RTColorscheme, "monokai"); monokai != nil {
 		if data, err := monokai.Data(); err == nil {
 			p.colorScheme = femto.ParseColorscheme(string(data))
 		}
 	}
-
 	p.contentView.SetColorscheme(p.colorScheme)
 	p.contentView.SetBorder(true)
 	p.contentView.SetBorderColor(tcell.ColorLightSlateGray)
-
 	p.contentView.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		if event.Key() == tcell.KeyEsc {
 			p.updateTaskContent(p.contentView.Buf.String())
@@ -235,7 +225,6 @@ func (p *TaskDetailView) setTaskDate(date time.Time, update bool) {
 			return
 		}
 	}
-
 	color := "whilte"
 	humanDate := date.Format(dateHumanLayout)
 	if date.Before(today) {
@@ -256,7 +245,6 @@ func (p *TaskDetailView) updateTaskToggleDisplay() {
 
 		p.AddItem(p.statusHint, 1, 1, false).
 			AddItem(p.taskToggleStatus, 1, 1, false)
-
 		if p.task.IsCompleted {
 			p.taskToggleStatus.SetLabel("Resume").SetBackgroundColor(tcell.ColorYellow)
 		} else {
@@ -293,7 +281,6 @@ func (p *TaskDetailView) copyTaskContent() {
 	var content bytes.Buffer
 	content.WriteString(p.task.Content)
 	_ = clipboard.WriteAll(content.String())
-
 	app.SetFocus(p)
 	statusView.showForSeconds("[green]Task content copyed. Try Pasting anywhere", 5)
 }
@@ -305,6 +292,5 @@ func makeBufferFromString(content string) *femto.Buffer {
 	buff.Settings["statusline"] = false
 	buff.Settings["softwrap"] = true
 	buff.Settings["scrollbar"] = true
-
 	return buff
 }

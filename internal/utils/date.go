@@ -10,7 +10,6 @@ func ParseStrToDate(input string, format string) (time.Time, error) {
 	if err != nil {
 		return time.Time{}, err
 	}
-
 	return ToDate(datetime), nil
 }
 

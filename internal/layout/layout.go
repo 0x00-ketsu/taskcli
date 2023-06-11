@@ -70,6 +70,5 @@ func Load(application *tview.Application) *tview.Flex {
 
 	// Bind keyboard shortcuts
 	setKeyboardShortcuts()
-
 	return layout
 }

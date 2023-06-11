@@ -22,10 +22,8 @@ func NewSearchView() *SearchView {
 		form: tview.NewForm(),
 	}
 	view.init()
-
 	view.AddItem(view.form, 0, 1, true)
 	view.SetBorder(true).SetTitle(" Search ")
-
 	return &view
 }
 
@@ -53,7 +51,6 @@ func (p *SearchView) search() {
 	taskView.RemoveItem(taskView.hint)
 	taskView.renderTaskList(tasks)
 	statusView.showForSeconds("[yellow]Displaying tasks of search", 3)
-
 	app.SetFocus(taskView)
 	removeTaskDetailView()
 }
@@ -62,7 +59,6 @@ func (p *SearchView) search() {
 func (p *SearchView) reset() {
 	p.form.Clear(true)
 	p.init()
-
 	app.SetFocus(p)
 }
 

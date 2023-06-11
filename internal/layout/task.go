@@ -77,7 +77,6 @@ func NewTaskView() *TaskView {
 			app.SetFocus(view)
 		}
 	})
-
 	return &view
 }
 
@@ -110,38 +109,28 @@ func (p *TaskView) loadFilterTasks(filter string) {
 		p.renderTaskList(tasks)
 		statusView.showForSeconds("[yellow]Displaying tasks of "+filter, 3)
 	}
-
 	app.SetFocus(taskView)
 	removeTaskDetailView()
 }
 
 // Get tasks based on selected item in Filter view
-func (p *TaskView) getFiterTasks(filter string) ([]model.Task, error) {
-	var tasks []model.Task
-	var err error
-
+func (p *TaskView) getFiterTasks(filter string) (tasks []model.Task, err error) {
 	switch filter {
 	case "today":
 		tasks, err = taskRepo.GetAllByDate(today)
-
 	case "tomorrow":
 		tasks, err = taskRepo.GetAllByDate(tomorrow)
-
 	case "last 7 days":
 		week := today.Add(time.Hour * 7 * 24)
 		tasks, err = taskRepo.GetAllByDateRange(today, week)
-
 	case "completed":
 		tasks, err = taskRepo.GetAllCompleted()
-
 	case "expired":
 		tasks, err = taskRepo.GetAllExpired()
-
 	case "trash":
 		tasks, err = taskRepo.GetAllDeleted()
 	}
-
-	return tasks, err
+	return
 }
 
 // Render task list
@@ -176,7 +165,6 @@ func (p *TaskView) renderTaskList(tasks []model.Task) {
 // Classify tasks to: todo, completed
 func (p *TaskView) classifyTasks(tasks []model.Task) {
 	var todoTasks, completedTasks, expiredTasks, deletedTasks []model.Task
-
 	for _, task := range tasks {
 		if task.IsDeleted {
 			deletedTasks = append(deletedTasks, task)
@@ -223,10 +211,8 @@ func (p *TaskView) classifyTasks(tasks []model.Task) {
 			p.list.AddItem("", "", 0, nil)
 			p.addTaskToList(emptyTask)
 		}
-
 		p.list.AddItem(COMPLETED_HEADER, "", 0, nil)
 		p.addTaskToList(emptyTask)
-
 		for _, task := range completedTasks {
 			p.addTaskToList(task)
 
@@ -246,7 +232,6 @@ func (p *TaskView) classifyTasks(tasks []model.Task) {
 	if len(expiredTasks) > 0 {
 		p.list.AddItem(EXPIRED_HEADER, "", 0, nil)
 		p.addTaskToList(emptyTask)
-
 		for _, task := range expiredTasks {
 			p.addTaskToList(task)
 
@@ -266,10 +251,8 @@ func (p *TaskView) classifyTasks(tasks []model.Task) {
 	if len(deletedTasks) > 0 {
 		p.list.AddItem(DELETED_HEADER, "", 0, nil)
 		p.addTaskToList(emptyTask)
-
 		for _, task := range deletedTasks {
 			p.addTaskToList(task)
-
 			dueDate := task.DueDate.Format("2006-01-02")
 			if p.filter == "search" {
 				text = fmt.Sprintf("%v    [lime::i]-- Due: %v", renderTaskTitle(task), dueDate)
@@ -288,7 +271,6 @@ func (p *TaskView) classifyTasks(tasks []model.Task) {
 func (p *TaskView) unclassifyTasks(tasks []model.Task) {
 	for _, task := range tasks {
 		p.addTaskToList(task)
-
 		dueDate := task.DueDate.Format("2006-01-02")
 		text := fmt.Sprintf("%v    [lime::i]-- Due: %v", renderTaskTitle(task), dueDate)
 		p.list.AddItem(text, "", 0, func() func() {
@@ -315,7 +297,6 @@ func (p *TaskView) activateTask() {
 
 	focusTask := p.getFocusTask()
 	taskDetailView.setTask(focusTask)
-
 	main.AddItem(taskDetailView, 0, 4, false)
 	app.SetFocus(taskDetailView)
 }
@@ -438,11 +419,9 @@ func (p *TaskView) restoreCurrentTask() {
 // Render task title
 func renderTaskTitle(task model.Task) string {
 	checkbox := "[ []"
-
 	if task.IsCompleted {
 		checkbox = "[x[]"
 	}
-
 	return fmt.Sprintf(" [%s]%s %s", getTaskTitleColor(task), checkbox, task.Title)
 }
 

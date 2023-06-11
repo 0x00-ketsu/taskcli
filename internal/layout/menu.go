@@ -59,7 +59,6 @@ var commonTaskMenus = []menuItem{
 					SetPlaceholderTextColor(tcell.ColorDarkSlateBlue).
 					SetFieldTextColor(tcell.ColorBlack).
 					SetFieldBackgroundColor(tcell.ColorLightBlue)
-
 				menuView.renameInput.SetDoneFunc(func(key tcell.Key) {
 					switch key {
 					case tcell.KeyEnter:
@@ -125,14 +124,16 @@ var deletedTaskMenus = []menuItem{
 }
 
 // NewMenuView displays menu view
-// NOTE: current only works for Task
+//
+// # NOTE
+//
+//	current only works for Task
 func NewMenuView() *MenuView {
 	view := MenuView{
 		Pages:       tview.NewPages(),
 		renameInput: tview.NewInputField(),
 	}
 	view.SetBorder(true)
-
 	return &view
 }
 

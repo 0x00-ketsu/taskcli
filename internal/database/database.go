@@ -2,7 +2,6 @@ package database
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -18,15 +17,13 @@ func Connect(filePath string) *storm.DB {
 	os.MkdirAll(baseDir, 0775)
 
 	if err := utils.CreateFileIfNotExist(dbPath); err != nil {
-		f, _ := ioutil.TempFile("taskcli", "bolt.db")
+		f, _ := os.CreateTemp("taskcli", "bolt.db")
 		dbPath = f.Name()
 	}
-
 	db, openErr := storm.Open(dbPath)
 	if openErr != nil {
 		fmt.Println("Error: open boltDB file failed")
 		os.Exit(0)
 	}
-
 	return db
 }

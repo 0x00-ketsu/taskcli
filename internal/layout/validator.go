@@ -6,6 +6,5 @@ func validateTaskName(taskName string) bool {
 		statusView.showForSeconds("[red]Task title should be at least 3 characters.", 5)
 		return false
 	}
-
 	return true
 }
