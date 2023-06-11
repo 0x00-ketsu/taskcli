@@ -22,7 +22,7 @@ func NewTask(db *storm.DB) repository.Task {
 	return &TaskBolt{db}
 }
 
-// GetTodayTodoCount returns todo items count in today
+// GetTodayTodoCount returns todo items count in today.
 func (t *TaskBolt) GetTodayTodoCount() int {
 	var tasks []model.Task
 
@@ -60,17 +60,12 @@ func (t TaskBolt) Search(title string, isCompleted, isDeleted bool) ([]model.Tas
 	return filteredTasks, nil
 }
 
-// GetByID returns a task with ID
-func (t *TaskBolt) GetByID(ID string) (model.Task, error) {
-	panic("Not implemented error")
-}
-
-// GetByTitle returns a task with title
+// GetByTitle returns a task with title.
 func (t *TaskBolt) GetByTitle(title string) (model.Task, error) {
 	return t.getOneByField("Title", title)
 }
 
-// GetAllCompleted returns all completed tasks
+// GetAllCompleted returns all completed tasks.
 func (t *TaskBolt) GetAllCompleted() ([]model.Task, error) {
 	var tasks []model.Task
 
@@ -83,7 +78,7 @@ func (t *TaskBolt) GetAllCompleted() ([]model.Task, error) {
 	return tasks, err
 }
 
-// GetAllExpired returns all expired tasks
+// GetAllExpired returns all expired tasks.
 func (t *TaskBolt) GetAllExpired() ([]model.Task, error) {
 	var tasks []model.Task
 
@@ -97,7 +92,7 @@ func (t *TaskBolt) GetAllExpired() ([]model.Task, error) {
 	return tasks, err
 }
 
-// GetAllDeleted returns all deleted tasks
+// GetAllDeleted returns all deleted tasks.
 func (t *TaskBolt) GetAllDeleted() ([]model.Task, error) {
 	var tasks []model.Task
 
@@ -110,7 +105,7 @@ func (t *TaskBolt) GetAllDeleted() ([]model.Task, error) {
 	return tasks, err
 }
 
-// GetAllByDate returns all tasks in specific date
+// GetAllByDate returns all tasks in specific date.
 func (t *TaskBolt) GetAllByDate(datetime time.Time) ([]model.Task, error) {
 	start := utils.GetDatetimeStart(datetime)
 	end := utils.GetDatetimeEnd(datetime)
@@ -118,7 +113,7 @@ func (t *TaskBolt) GetAllByDate(datetime time.Time) ([]model.Task, error) {
 	return t.GetAllByDateRange(start, end)
 }
 
-// GetAllByDateRange returns all tasks in specific date range
+// GetAllByDateRange returns all tasks in specific date range.
 func (t *TaskBolt) GetAllByDateRange(from, to time.Time) ([]model.Task, error) {
 	var tasks []model.Task
 
@@ -131,7 +126,7 @@ func (t *TaskBolt) GetAllByDateRange(from, to time.Time) ([]model.Task, error) {
 	return tasks, err
 }
 
-// Create creates a new task
+// Create creates a new task.
 func (t *TaskBolt) Create(title, content string) (*model.Task, error) {
 	if t.IsTaskExist(title) {
 		msg := fmt.Sprintf("task title: %v is alreay exist", title)
@@ -151,17 +146,17 @@ func (t *TaskBolt) Create(title, content string) (*model.Task, error) {
 	return &task, err
 }
 
-// Update updates a task
+// Update updates a task.
 func (t *TaskBolt) Update(task *model.Task) error {
 	return t.DB.Update(task)
 }
 
-// UpdateField updates a task with specific field
+// UpdateField updates a task with specific field.
 func (t *TaskBolt) UpdateField(task *model.Task, fieldName string, value interface{}) error {
 	return t.DB.UpdateField(task, fieldName, value)
 }
 
-// Delete deletes a task
+// Delete deletes a task.
 func (t *TaskBolt) Delete(task *model.Task) error {
 	task.IsDeleted = true
 	return t.Update(task)
