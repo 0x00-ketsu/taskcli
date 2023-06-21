@@ -1,4 +1,5 @@
 # Taskcli
+
  ```markdown
  ________________________________
 < A terminal UI for manage tasks >
@@ -10,7 +11,7 @@
                 ||     ||
  ```
 
-[](https://user-images.githubusercontent.com/16932133/196026551-b9b51e25-a35f-4f4c-bb38-aff134277564.mp4) 
+[video](https://user-images.githubusercontent.com/16932133/196026551-b9b51e25-a35f-4f4c-bb38-aff134277564.mp4)
 
 ## 🌟 Features
 
@@ -21,12 +22,12 @@
 - Support `markdown` syntax
 
 If you want to preview markdown in terminal, you can try my another project:
-[smooth](https://github.com/0x00-ketsu/smooth)
-
+[slides](https://github.com/0x00-ketsu/slides)
 
 ## 📥 Install
 
 ### Go install
+
 ```shell
 go install github.com/0x00-ketsu/taskcli@latest
 ```
@@ -93,8 +94,6 @@ Flags:
 |  Task Detail Panel   |  `Ctrl-d`   |  Scroll down  |
 |  Task Detail Panel   |  `Ctrl-u`   |  Scroll up  |
 |  Task Detail Panel   |  `v`   |  Edit task content with external editor  |
-
-
 
 ## 💡 Inspiration by
 
